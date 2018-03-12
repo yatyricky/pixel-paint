@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
@@ -6,6 +7,9 @@ public class Player : MonoBehaviour
     public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
     public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
 
+    public Grid GridObj;
+    public Tilemap TileMapObj;
+    public TileBase TileBaseObj;
 
     void Update()
     {
@@ -26,8 +30,9 @@ public class Player : MonoBehaviour
 
             // Find the difference in the distances between each frame.
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+            Debug.Log(deltaMagnitudeDiff);
 
-            Zoom(deltaMagnitudeDiff);
+            Zoom(deltaMagnitudeDiff / 10.0f);
         }
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -37,6 +42,17 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             Zoom(-10);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            // get the collision point of the ray with the z = 0 plane
+            Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
+            Vector3Int position = GridObj.WorldToCell(worldPoint);
+            Debug.Log("Press x = " + position.x + ", y = " + position.y);
+            //TileMapObj.SetColor(position, Color.red);
+            TileMapObj.SetTile(position, TileBaseObj);
         }
     }
 
