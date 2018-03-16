@@ -9,7 +9,9 @@ public class Player : MonoBehaviour
 
     public Grid GridObj;
     public Tilemap TileMapObj;
-    public TileBase TileBaseObj;
+    public TileBase EmptyTile;
+
+    public Color CurrentColor;
 
     void Update()
     {
@@ -46,13 +48,17 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
+            Debug.Log(Input.mousePosition);
             // get the collision point of the ray with the z = 0 plane
             Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
             Vector3Int position = GridObj.WorldToCell(worldPoint);
             Debug.Log("Press x = " + position.x + ", y = " + position.y);
-            //TileMapObj.SetColor(position, Color.red);
-            TileMapObj.SetTile(position, TileBaseObj);
+            TileMapObj.SetTileFlags(position, TileFlags.None);
+            TileMapObj.SetTile(position, EmptyTile);
+            TileMapObj.SetTileFlags(position, TileFlags.None);
+            TileMapObj.SetColor(position, CurrentColor);
+            Debug.Log("Current color = " + CurrentColor.ToString());
         }
     }
 
