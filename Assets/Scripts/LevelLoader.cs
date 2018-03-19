@@ -8,18 +8,17 @@ public class LevelLoader : MonoBehaviour
     public Camera GameCamera;
     public GameObject TilemapObj;
     public TileBase WhiteTile;
-    public LevelAsset[] Levels;
     public GameObject PallateContainer;
     public GameObject ColorPickerPrefab;
     public Tilemap Canvas;
     public Tilemap MarkerOverlay;
     public TileBase[] Markers;
+    public Player GameController;
 
     void Start()
     {
-        Debug.Log(Levels[0].PaletteSize);
-        InitPallete(Levels[0]);
-        InitWorld(Levels[0]);
+        InitPallete(GameController.CurrentLevel);
+        InitWorld(GameController.CurrentLevel);
     }
 
     private void InitWorld(LevelAsset asset)

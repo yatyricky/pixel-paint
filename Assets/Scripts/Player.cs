@@ -9,9 +9,14 @@ public class Player : MonoBehaviour
 
     public Grid GridObj;
     public Tilemap TileMapObj;
+    public Tilemap MarkerOverlay;
     public TileBase EmptyTile;
 
     public Color CurrentColor;
+    public LevelAsset CurrentLevel;
+
+    private bool justDragged = false;
+    public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     void Update()
     {
@@ -45,20 +50,45 @@ public class Player : MonoBehaviour
         {
             Zoom(-10);
         }
+    }
 
-        if (Input.GetKeyUp(KeyCode.Mouse0))
+    private void OnMouseDown()
+    {
+        justDragged = false;
+    }
+
+    private void OnMouseUp()
+    {
+        if (justDragged == false)
         {
             Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
-            Debug.Log(Input.mousePosition);
             // get the collision point of the ray with the z = 0 plane
             Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
             Vector3Int position = GridObj.WorldToCell(worldPoint);
-            Debug.Log("Press x = " + position.x + ", y = " + position.y);
             TileMapObj.SetTileFlags(position, TileFlags.None);
             TileMapObj.SetTile(position, EmptyTile);
             TileMapObj.SetTileFlags(position, TileFlags.None);
             TileMapObj.SetColor(position, CurrentColor);
-            Debug.Log("Current color = " + CurrentColor.ToString());
+
+            if (CurrentColor.Equals(CurrentLevel.Data[position.x * CurrentLevel.Height + position.y]))
+            {
+                MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                MarkerOverlay.SetColor(position, TRANSPARENT);
+            }
+            else
+            {
+                MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                MarkerOverlay.SetColor(position, Color.white);
+            }
+        }
+    }
+
+    private void OnMouseDrag()
+    {
+        CameraObj.transform.Translate((Vector2.zero - MouseHelper.mouseDelta) *  CameraObj.orthographicSize / CameraObj.transform.position.z / CameraObj.transform.position.z);
+        if (MouseHelper.mouseDelta.magnitude > 0.5f)
+        {
+            justDragged = true;
         }
     }
 
