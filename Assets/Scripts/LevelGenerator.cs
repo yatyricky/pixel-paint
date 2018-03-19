@@ -1,5 +1,5 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEngine.Tilemaps;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,7 +44,6 @@ public class LevelGenerator : MonoBehaviour
                 Canvas.SetTile(pos, WhiteTile);
                 Canvas.SetTileFlags(pos, TileFlags.None);
                 float gray = color.grayscale;
-                Canvas.SetColor(pos, new Color(gray, gray, gray, color.a));
                 Canvas.SetColor(pos, color);
 
                 int test;
@@ -87,3 +86,4 @@ public class LevelGenerator : MonoBehaviour
     }
 
 }
+#endif

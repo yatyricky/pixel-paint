@@ -46,7 +46,7 @@ public class Player : MonoBehaviour
             Zoom(-10);
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyUp(KeyCode.Mouse0))
         {
             Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
             Debug.Log(Input.mousePosition);
