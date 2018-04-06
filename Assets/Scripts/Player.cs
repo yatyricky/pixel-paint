@@ -11,9 +11,9 @@ public class Player : MonoBehaviour
     public Tilemap TileMapObj;
     public Tilemap MarkerOverlay;
     public TileBase EmptyTile;
+    public GameScene GameData;
 
     public Color CurrentColor;
-    public LevelAsset CurrentLevel;
 
     private bool justDragged = false;
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
@@ -41,14 +41,13 @@ public class Player : MonoBehaviour
 
             Zoom(deltaMagnitudeDiff / 10.0f);
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
-            Debug.Log("Key pressed");
-            Zoom(10);
+            Zoom(-2);
         }
-        if (Input.GetKeyDown(KeyCode.Z))
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
-            Zoom(-10);
+            Zoom(2);
         }
     }
 
@@ -70,7 +69,7 @@ public class Player : MonoBehaviour
             TileMapObj.SetTileFlags(position, TileFlags.None);
             TileMapObj.SetColor(position, CurrentColor);
 
-            if (CurrentColor.Equals(CurrentLevel.Data[position.x * CurrentLevel.Height + position.y]))
+            if (CurrentColor.Equals(GameData.Level.Data[position.y * GameData.Level.Width + position.x]))
             {
                 MarkerOverlay.SetTileFlags(position, TileFlags.None);
                 MarkerOverlay.SetColor(position, TRANSPARENT);
@@ -100,8 +99,10 @@ public class Player : MonoBehaviour
             // ... change the orthographic size based on the change in distance between the touches.
             CameraObj.orthographicSize += delta * orthoZoomSpeed;
 
+            Debug.Log(CameraObj.orthographicSize);
+
             // Make sure the orthographic size never drops below zero.
-            CameraObj.orthographicSize = Mathf.Max(CameraObj.orthographicSize, 0.1f);
+            CameraObj.orthographicSize = Mathf.Max(CameraObj.orthographicSize, Configs.ZOOM_MIN);
         }
         else
         {
