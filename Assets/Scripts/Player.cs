@@ -102,7 +102,9 @@ public class Player : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        CameraObj.transform.Translate((Vector2.zero - MouseHelper.mouseDelta) *  CameraObj.orthographicSize / CameraObj.transform.position.z / CameraObj.transform.position.z);
+        float x = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.x / Screen.width / Configs.WINDOW_RATIO;
+        float y = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.y / Screen.height / Configs.WINDOW_HEIGHT * Configs.DESIGN_HEIGHT;
+        CameraObj.transform.Translate(new Vector3(x, y, 0));
         if (MouseHelper.mouseDelta.magnitude > 0.5f)
         {
             justDragged = true;
