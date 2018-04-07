@@ -1,21 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
     public Camera CameraObj;
-    public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
-    public float orthoZoomSpeed = 0.5f;        // The rate of change of the orthographic size in orthographic mode.
 
     public Grid GridObj;
     public Tilemap TileMapObj;
     public Tilemap MarkerOverlay;
     public TileBase EmptyTile;
-    public GameScene GameData;
+    public GameScene GameManager;
 
-    public Color CurrentColor;
+    [HideInInspector] public Color CurrentColor;
 
     private bool justDragged = false;
+    private float maxCam;
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     void Update()
@@ -44,10 +44,12 @@ public class Player : MonoBehaviour
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
             Zoom(-2);
+            UpdateMarkers();
         }
         else if (Input.GetAxis("Mouse ScrollWheel") < 0f)
         {
             Zoom(2);
+            UpdateMarkers();
         }
     }
 
@@ -66,14 +68,14 @@ public class Player : MonoBehaviour
             Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
             Vector3Int position = GridObj.WorldToCell(worldPoint);
 
-            if (GameData.IsClickable(position))
+            if (GameManager.IsClickable(position))
             {
                 TileMapObj.SetTileFlags(position, TileFlags.None);
                 TileMapObj.SetTile(position, EmptyTile);
                 TileMapObj.SetTileFlags(position, TileFlags.None);
                 TileMapObj.SetColor(position, CurrentColor);
 
-                if (CurrentColor.Equals(GameData.Level.Data[position.y * GameData.Level.Width + position.x]))
+                if (CurrentColor.Equals(GameManager.Level.Data[position.y * GameManager.Level.Width + position.x]))
                 {
                     MarkerOverlay.SetTileFlags(position, TileFlags.None);
                     MarkerOverlay.SetColor(position, TRANSPARENT);
@@ -87,6 +89,17 @@ public class Player : MonoBehaviour
         }
     }
 
+    internal void ZoomTo(float camSize)
+    {
+        maxCam = camSize * 2;
+        if (camSize < Configs.ZOOM_MIN)
+        {
+            camSize = Configs.ZOOM_MIN;
+        }
+        CameraObj.orthographicSize = camSize;
+        UpdateMarkers();
+    }
+
     private void OnMouseDrag()
     {
         CameraObj.transform.Translate((Vector2.zero - MouseHelper.mouseDelta) *  CameraObj.orthographicSize / CameraObj.transform.position.z / CameraObj.transform.position.z);
@@ -96,24 +109,23 @@ public class Player : MonoBehaviour
         }
     }
 
-    private void Zoom(float delta)
+    public void UpdateMarkers()
     {
-        // If the camera is orthographic...
         if (CameraObj.orthographic)
         {
-            // ... change the orthographic size based on the change in distance between the touches.
-            CameraObj.orthographicSize += delta * orthoZoomSpeed;
-
-            // Make sure the orthographic size never drops below zero.
-            CameraObj.orthographicSize = Mathf.Max(CameraObj.orthographicSize, Configs.ZOOM_MIN);
+            GameManager.UpdateMarkers(CameraObj.orthographicSize);
         }
-        else
-        {
-            // Otherwise change the field of view based on the change in distance between the touches.
-            CameraObj.fieldOfView += delta * perspectiveZoomSpeed;
+        // else not implemented
+    }
 
-            // Clamp the field of view to make sure it's between 0 and 180.
-            CameraObj.fieldOfView = Mathf.Clamp(CameraObj.fieldOfView, 0.1f, 179.9f);
+    private void Zoom(float delta)
+    {
+        if (CameraObj.orthographic)
+        {
+            float targetSize = CameraObj.orthographicSize + delta;
+            targetSize = Mathf.Min(targetSize , maxCam);
+            targetSize = Mathf.Max(targetSize, Configs.ZOOM_MIN);
+            CameraObj.gameObject.GetComponent<LerpZoom>().TargetSize = targetSize;
         }
     }
 }

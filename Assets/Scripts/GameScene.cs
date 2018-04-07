@@ -57,6 +57,22 @@ public class GameScene : MonoBehaviour
                 MarkerOverlay.SetTile(pos, Markers[Array.IndexOf(Level.Palette, color)]);
             }
         }
+
+        // zoom camera properly
+        int heightPixels = (int)(Level.Height / Configs.ART_IN_WINDOW_RATIO);
+        int widthPixels = (int)(Level.Width / Configs.ART_IN_WINDOW_RATIO);
+        float camSize = Configs.ZOOM_MIN;
+        if (heightPixels / widthPixels > Configs.WINDOW_RATIO)
+        {
+            // too high
+            camSize = heightPixels / Configs.WINDOW_RATIO / Configs.PIXEL_WIDTH_CAM_RATIO;
+        }
+        else
+        {
+            // too wide
+            camSize = widthPixels / Configs.PIXEL_WIDTH_CAM_RATIO;
+        }
+        GameController.ZoomTo(camSize);
     }
 
     private void InitPallete()
@@ -114,4 +130,39 @@ public class GameScene : MonoBehaviour
         });
     }
 
+    internal void UpdateMarkers(float size)
+    {
+        if (size > Configs.ZOOM_HIDE_MARKER)
+        {
+            // No markers
+            for (int i = 0; i < Level.Data.Length; i++)
+            {
+                int y = i / Level.Width;
+                int x = i - y * Level.Width;
+                Vector3Int pos = new Vector3Int(x, y, 0);
+
+                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
+                MarkerOverlay.SetColor(pos, new Color(0, 0, 0, 0));
+            }
+        }
+        else
+        {
+            float greyColor = 1 - (size - Configs.ZOOM_FADE_MARKER) / (Configs.ZOOM_HIDE_MARKER - Configs.ZOOM_FADE_MARKER);
+            if (greyColor > 1)
+            {
+                greyColor = 1;
+            }
+            // Solid markers
+            for (int i = 0; i < Level.Data.Length; i++)
+            {
+                int y = i / Level.Width;
+                int x = i - y * Level.Width;
+                Vector3Int pos = new Vector3Int(x, y, 0);
+
+                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
+                MarkerOverlay.SetColor(pos, new Color(1, 1, 1, greyColor));
+            }
+        }
+        
+    }
 }
