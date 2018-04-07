@@ -15,7 +15,6 @@ public class ColorPicker : MonoBehaviour
 
     public void ColorPicked()
     {
-        Debug.Log("Clicked color is " + SelColor.ToString());
         Player p = GameObject.FindGameObjectWithTag("GameController").GetComponent<Player>();
         p.CurrentColor = SelColor;
     }

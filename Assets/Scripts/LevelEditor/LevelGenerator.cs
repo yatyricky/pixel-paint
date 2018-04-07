@@ -63,7 +63,7 @@ public class LevelGenerator : MonoBehaviour
         LevelAsset asset = new LevelAsset();
         asset.Height = _height;
         asset.Width = _width;
-        Color[] palette = new Color[_distinctColors.Keys.Count];
+        List<Color> palette = new List<Color>();
         for (int i = 0; i < _distinctColors.Count; i ++)
         {
             string hex = "#" + _distinctColors.ElementAt(i).Key;
@@ -71,14 +71,17 @@ public class LevelGenerator : MonoBehaviour
             Color color;
             if (ColorUtility.TryParseHtmlString(hex, out color))
             {
-                palette[i] = color;
+                if (color.a != 0f)
+                {
+                    palette.Add(color);
+                }
             }
             else
             {
                 throw new System.Exception("ColorUtility is wrong!");
             }
         }
-        asset.Palette = palette;
+        asset.Palette = palette.ToArray<Color>();
         asset.Data = _data;
 
         string json = JsonUtility.ToJson(asset);

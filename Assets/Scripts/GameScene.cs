@@ -48,11 +48,14 @@ public class GameScene : MonoBehaviour
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetTile(pos, WhiteTile);
             Canvas.SetTileFlags(pos, TileFlags.None);
-            float gray = color.grayscale;
+            float gray = color.grayscale * 0.8f + 0.2f;
             Canvas.SetColor(pos, new Color(gray, gray, gray, color.a));
 
             MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-            MarkerOverlay.SetTile(pos, Markers[Array.IndexOf(Level.Palette, color)]);
+            if (color.a != 0f)
+            {
+                MarkerOverlay.SetTile(pos, Markers[Array.IndexOf(Level.Palette, color)]);
+            }
         }
     }
 
@@ -72,6 +75,28 @@ public class GameScene : MonoBehaviour
             }
         }
         firstPicker.ColorPicked();
+    }
+
+    internal bool IsClickable(Vector3Int position)
+    {
+        // out of bounds
+        if (position.x < 0 || position.x >= Level.Width || position.y < 0 || position.y >= Level.Height)
+        {
+            return false;
+        }
+        // already true
+        Color currentColor = Canvas.GetColor(position);
+        Color trueColor = Level.Data[position.y * Level.Width + position.x];
+        if (currentColor.Equals(trueColor))
+        {
+            return false;
+        }
+        // transparent
+        if (trueColor.a == 0f)
+        {
+            return false;
+        }
+        return true;
     }
 
     public void OnBackClicked()

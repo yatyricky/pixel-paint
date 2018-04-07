@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
         justDragged = false;
     }
 
+    // clicked on a pixel
     private void OnMouseUp()
     {
         if (justDragged == false)
@@ -64,20 +65,24 @@ public class Player : MonoBehaviour
             // get the collision point of the ray with the z = 0 plane
             Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
             Vector3Int position = GridObj.WorldToCell(worldPoint);
-            TileMapObj.SetTileFlags(position, TileFlags.None);
-            TileMapObj.SetTile(position, EmptyTile);
-            TileMapObj.SetTileFlags(position, TileFlags.None);
-            TileMapObj.SetColor(position, CurrentColor);
 
-            if (CurrentColor.Equals(GameData.Level.Data[position.y * GameData.Level.Width + position.x]))
+            if (GameData.IsClickable(position))
             {
-                MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                MarkerOverlay.SetColor(position, TRANSPARENT);
-            }
-            else
-            {
-                MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                MarkerOverlay.SetColor(position, Color.white);
+                TileMapObj.SetTileFlags(position, TileFlags.None);
+                TileMapObj.SetTile(position, EmptyTile);
+                TileMapObj.SetTileFlags(position, TileFlags.None);
+                TileMapObj.SetColor(position, CurrentColor);
+
+                if (CurrentColor.Equals(GameData.Level.Data[position.y * GameData.Level.Width + position.x]))
+                {
+                    MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                    MarkerOverlay.SetColor(position, TRANSPARENT);
+                }
+                else
+                {
+                    MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                    MarkerOverlay.SetColor(position, Color.white);
+                }
             }
         }
     }
@@ -98,8 +103,6 @@ public class Player : MonoBehaviour
         {
             // ... change the orthographic size based on the change in distance between the touches.
             CameraObj.orthographicSize += delta * orthoZoomSpeed;
-
-            Debug.Log(CameraObj.orthographicSize);
 
             // Make sure the orthographic size never drops below zero.
             CameraObj.orthographicSize = Mathf.Max(CameraObj.orthographicSize, Configs.ZOOM_MIN);
