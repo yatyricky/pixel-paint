@@ -86,6 +86,9 @@ public class Player : MonoBehaviour
                     MarkerOverlay.SetColor(position, Color.black);
                 }
             }
+
+            // Touched, should save
+            GameManager.touched = true;
         }
     }
 

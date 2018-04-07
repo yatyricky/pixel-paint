@@ -18,6 +18,7 @@ public class GameScene : MonoBehaviour
     public Player GameController;
     [HideInInspector] public LevelAsset Level;
     [HideInInspector] public LevelAsset Save;
+    public bool touched = false;
     private string LevelName;
 
     private static GameScene self;
@@ -127,7 +128,11 @@ public class GameScene : MonoBehaviour
     public void OnBackClicked()
     {
         SceneManager.LoadScene("Hall");
-        SaveGame();
+
+        if (touched == true)
+        {
+            SaveGame();
+        }
     }
 
     private void SaveGame()

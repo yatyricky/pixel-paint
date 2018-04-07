@@ -29,8 +29,8 @@ public class TwoColumnLayout : MonoBehaviour
             int row = i / 2;
             int col = i % 2;
             Transform cur = children[i].gameObject.transform;
-            Vector3 pos = new Vector3(col * 353 + 14 - 360, 640 - row * 424 - 14, -0.1f);
-            cur.position = pos;
+            Vector3 pos = new Vector3(col * 353 + 14, - 14 - row * 424, -0.1f);
+            cur.localPosition = pos;
         }
         gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, (children.Length + 1) / 2 * 424 + 14);
     }
