@@ -7,6 +7,8 @@ public class LevelEntrance : MonoBehaviour
     public SpriteRenderer Art;
 
     private LevelAsset mData;
+    private LevelAsset mSave;
+    private string mName;
 
     private void Awake()
     {
@@ -35,12 +37,12 @@ public class LevelEntrance : MonoBehaviour
         else
         {
             // TODO SPINNER
-            GameScene.DispatchSetGameData(mData);
+            GameScene.DispatchSetGameData(mData, mName, mSave);
             SceneManager.LoadScene("Game");
         }
     }
 
-    internal void SetData(LevelAsset data)
+    internal void SetData(LevelAsset data, string name, LevelAsset save)
     {
         Texture2D image = new Texture2D(data.Width, data.Height);
         float pixelsPerUnit = 0.2f;
@@ -52,10 +54,25 @@ public class LevelEntrance : MonoBehaviour
         {
             pixelsPerUnit = data.Width / Configs.LEVEL_ENTRANCE_FRAME_SIZE;
         }
-        image.SetPixels(data.Data);
+        if (save != null)
+        {
+            image.SetPixels(save.Data);
+        }
+        else
+        {
+            Color[] greyed = new Color[data.Data.Length];
+            for (int i = 0; i < data.Data.Length; i ++)
+            {
+                greyed[i] = Utils.ConvertGreyscale(data.Data[i]);
+            }
+            image.SetPixels(greyed);
+        }
         image.filterMode = FilterMode.Point;
         image.Apply();
         Art.sprite = Sprite.Create(image, new Rect(0.0f, 0.0f, image.width, image.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
         mData = data;
+
+        mSave = save;
+        mName = name;
     }
 }

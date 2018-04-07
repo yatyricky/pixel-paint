@@ -3,6 +3,7 @@ using UnityEngine.Tilemaps;
 using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class GameScene : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class GameScene : MonoBehaviour
     public TileBase[] Markers;
     public Player GameController;
     [HideInInspector] public LevelAsset Level;
+    [HideInInspector] public LevelAsset Save;
+    private string LevelName;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
@@ -48,8 +51,14 @@ public class GameScene : MonoBehaviour
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetTile(pos, WhiteTile);
             Canvas.SetTileFlags(pos, TileFlags.None);
-            float gray = color.grayscale * 0.7f + 0.15f;
-            Canvas.SetColor(pos, new Color(gray, gray, gray, color.a));
+            if (Save != null)
+            {
+                Canvas.SetColor(pos, Save.Data[i]);
+            }
+            else
+            {
+                Canvas.SetColor(pos, Utils.ConvertGreyscale(color));
+            }
 
             MarkerOverlay.SetTileFlags(pos, TileFlags.None);
             if (color.a != 0f)
@@ -118,13 +127,36 @@ public class GameScene : MonoBehaviour
     public void OnBackClicked()
     {
         SceneManager.LoadScene("Hall");
+        SaveGame();
     }
 
-    public static void DispatchSetGameData(LevelAsset level)
+    private void SaveGame()
+    {
+        LevelAsset save = new LevelAsset();
+        Color[] data = new Color[Level.Width * Level.Height];
+        for (int y = 0; y < Level.Height; y++)
+        {
+            for (int x = 0; x < Level.Width; x++)
+            {
+                data[y * Level.Width + x] = Canvas.GetColor(new Vector3Int(x, y, 0));
+            }
+        }
+        save.Data = data;
+        save.Palette = null;
+        save.Width = 0;
+        save.Height = 0;
+
+        string json = JsonUtility.ToJson(save);
+        File.WriteAllText(Path.Combine(Path.Combine(Application.streamingAssetsPath, "SavedData"), LevelName), json);
+    }
+
+    public static void DispatchSetGameData(LevelAsset level, string name, LevelAsset save)
     {
         ReceivedActions.Enqueue(() =>
         {
             self.Level = level;
+            self.Save = save;
+            self.LevelName = name;
             self.InitPallete();
             self.InitWorld();
         });
@@ -160,7 +192,14 @@ public class GameScene : MonoBehaviour
                 Vector3Int pos = new Vector3Int(x, y, 0);
 
                 MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-                MarkerOverlay.SetColor(pos, new Color(0, 0, 0, greyColor));
+                if (Canvas.GetColor(new Vector3Int(x, y, 0)).Equals(Level.Data[i]))
+                {
+                    MarkerOverlay.SetColor(pos, new Color(0, 0, 0, 0));
+                }
+                else
+                {
+                    MarkerOverlay.SetColor(pos, new Color(0, 0, 0, greyColor));
+                }
             }
         }
     }
