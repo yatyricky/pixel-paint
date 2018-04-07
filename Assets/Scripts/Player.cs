@@ -83,7 +83,7 @@ public class Player : MonoBehaviour
                 else
                 {
                     MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                    MarkerOverlay.SetColor(position, Color.white);
+                    MarkerOverlay.SetColor(position, Color.black);
                 }
             }
         }

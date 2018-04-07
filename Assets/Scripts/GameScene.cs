@@ -48,7 +48,7 @@ public class GameScene : MonoBehaviour
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetTile(pos, WhiteTile);
             Canvas.SetTileFlags(pos, TileFlags.None);
-            float gray = color.grayscale * 0.8f + 0.2f;
+            float gray = color.grayscale * 0.7f + 0.15f;
             Canvas.SetColor(pos, new Color(gray, gray, gray, color.a));
 
             MarkerOverlay.SetTileFlags(pos, TileFlags.None);
@@ -160,9 +160,8 @@ public class GameScene : MonoBehaviour
                 Vector3Int pos = new Vector3Int(x, y, 0);
 
                 MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-                MarkerOverlay.SetColor(pos, new Color(1, 1, 1, greyColor));
+                MarkerOverlay.SetColor(pos, new Color(0, 0, 0, greyColor));
             }
         }
-        
     }
 }
