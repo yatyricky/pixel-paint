@@ -12,4 +12,8 @@ public class Configs
     public const float WINDOW_HEIGHT = 992f;
     public const float WINDOW_RATIO = WINDOW_HEIGHT / DESIGN_WIDTH;
     public const float PIXEL_WIDTH_CAM_RATIO = 1.42f;
+
+    public const string SERVER = "https://g.nefti.me";
+    public const string PORT = "11367";
+    public const string SECRET = "URNwTDLK-iNYIzZ6P-YAV1l5pK-PvKZuFb9";
 }

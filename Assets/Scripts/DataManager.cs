@@ -39,16 +39,28 @@ public class DataManager : MonoBehaviour
     private void LoadLevelData()
     {
         // load streamed level first
-        //string path = Path.Combine(Application.streamingAssetsPath, "LevelData");
-        //DirectoryInfo dir = new DirectoryInfo(path);
-        //FileInfo[] info = dir.GetFiles("*.json");
-        //foreach (FileInfo f in info)
-        //{
-        //    string key = f.Name.Split('.')[0];
-        //    string json = File.ReadAllText(f.FullName);
-        //    LevelData asset = JsonUtility.FromJson<LevelData>(json);
-        //    AllLevels.Add(asset.Name, new LevelAsset(asset));
-        //}
+        List<string> fileList = new List<string>();
+        string dirPath = Path.Combine(Application.persistentDataPath, "LevelData");
+        if (Directory.Exists(dirPath))
+        {
+            DirectoryInfo levelDir = new DirectoryInfo(dirPath);
+            FileInfo[] saveInfo = levelDir.GetFiles("*.json");
+            foreach (FileInfo f in saveInfo)
+            {
+                string key = f.Name.Split('.')[0];
+                fileList.Add(key);
+                string json = File.ReadAllText(f.FullName);
+                LevelData asset = JsonUtility.FromJson<LevelData>(json);
+                AllLevels.Add(asset.Name, new LevelAsset(asset));
+            }
+        }
+        else
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+
+        // get updates
+        StartCoroutine(DownloadNewLevels(string.Join(",", fileList.ToArray())));
 
         // Load internal levels
         for (int i = 0; i < InternalLevels.Length; i++)
@@ -61,6 +73,24 @@ public class DataManager : MonoBehaviour
         }
 
         Debug.Log(AllLevels.Count);
+    }
+
+    private IEnumerator DownloadNewLevels(string files)
+    {
+        string request = Configs.SERVER + ":" + Configs.PORT + "/?secret=" + Configs.SECRET + "&list=" + files;
+        WWW www = new WWW(request);
+        yield return www;
+
+        string dirPath = Application.persistentDataPath + "/LevelData";
+        string zipPath = dirPath  + "/bundle.zip";
+        if (File.Exists(zipPath))
+        {
+            File.Delete(zipPath);
+        }
+        File.WriteAllBytes(zipPath, www.bytes);
+        ZipUtil.Unzip(zipPath, dirPath);
+        File.Delete(zipPath);
+        UpdateLevelData();
     }
 
     private void LoadSaveData()
@@ -92,5 +122,26 @@ public class DataManager : MonoBehaviour
         {
             AllSaves.Add(key, new LevelAsset(data));
         }
+    }
+
+    internal void UpdateLevelData()
+    {
+        string dirPath = Path.Combine(Application.persistentDataPath, "LevelData");
+        if (Directory.Exists(dirPath))
+        {
+            DirectoryInfo levelDir = new DirectoryInfo(dirPath);
+            FileInfo[] saveInfo = levelDir.GetFiles("*.json");
+            foreach (FileInfo f in saveInfo)
+            {
+                string key = f.Name.Split('.')[0];
+                if (!AllLevels.ContainsKey(key))
+                {
+                    string json = File.ReadAllText(f.FullName);
+                    LevelData asset = JsonUtility.FromJson<LevelData>(json);
+                    AllLevels.Add(asset.Name, new LevelAsset(asset));
+                }
+            }
+        }
+        HallScene.DispatchRenderLevels();
     }
 }

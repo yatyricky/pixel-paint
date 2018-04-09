@@ -40,16 +40,19 @@ public class HallScene : MonoBehaviour
             // fill saves
             foreach (KeyValuePair<string, LevelAsset> entry in DataManager.Instance.AllSaves)
             {
-                GameObject go = Instantiate(self.LevelEntrancePrefab);
-                self.FavoriteViewObjects.AddChild(go);
                 LevelAsset levelData;
                 if (DataManager.Instance.AllLevels.TryGetValue(entry.Key, out levelData))
                 {
-                    go.GetComponent<LevelEntrance>().SetData(levelData, entry.Value);
+                    if (!self.FavoriteViewObjects.HasLoad(entry.Key))
+                    {
+                        GameObject go = Instantiate(self.LevelEntrancePrefab);
+                        self.FavoriteViewObjects.AddChild(go, entry.Key);
+                        go.GetComponent<LevelEntrance>().SetData(levelData, entry.Value);
+                    }
                 }
                 else
                 {
-                    throw new Exception("has save without level");
+                    Debug.Log("has save without level");
                 }
             }
             // fill all levels
@@ -57,9 +60,12 @@ public class HallScene : MonoBehaviour
             {
                 if (!DataManager.Instance.AllSaves.ContainsKey(entry.Key))
                 {
-                    GameObject go = Instantiate(self.LevelEntrancePrefab);
-                    self.TrendingViewObjects.AddChild(go);
-                    go.GetComponent<LevelEntrance>().SetData(entry.Value, null);
+                    if (!self.TrendingViewObjects.HasLoad(entry.Key))
+                    {
+                        GameObject go = Instantiate(self.LevelEntrancePrefab);
+                        self.TrendingViewObjects.AddChild(go, entry.Key);
+                        go.GetComponent<LevelEntrance>().SetData(entry.Value, null);
+                    }
                 }
             }
         });

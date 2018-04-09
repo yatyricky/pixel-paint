@@ -1,15 +1,28 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class TwoColumnLayout : MonoBehaviour
 {
+    private List<string> Keys;
+
+    private void Awake()
+    {
+        Keys = new List<string>();
+    }
 
     void Start()
     {
         LayoutChildren();
     }
 
-    public void AddChild(GameObject obj)
+    public bool HasLoad(string key)
     {
+        return Keys.Contains(key);
+    }
+
+    public void AddChild(GameObject obj, string key)
+    {
+        Keys.Add(key);
         obj.transform.SetParent(gameObject.transform);
         LayoutChildren();
     }
