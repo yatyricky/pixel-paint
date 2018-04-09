@@ -130,7 +130,6 @@ public class GameScene : MonoBehaviour
 
         if (touched == true)
         {
-            Debug.Log("Trying to save game");
             SaveGame();
         }
         HallScene.DispatchRenderLevels();
@@ -154,7 +153,13 @@ public class GameScene : MonoBehaviour
         save.Name = Level.Name;
 
         string json = JsonUtility.ToJson(save);
-        File.WriteAllText(Path.Combine(Path.Combine(Application.streamingAssetsPath, "SavedData"), save.Name + ".json"), json);
+        string dirPath = Path.Combine(Application.persistentDataPath, "SavedData");
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+        File.WriteAllText(Path.Combine(dirPath, save.Name + ".json"), json);
+        DataManager.Instance.UpdateSavedData(Level.Name, save);
     }
 
     public static void DispatchSetGameData(LevelAsset level, LevelAsset save)

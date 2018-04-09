@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -56,25 +57,40 @@ public class DataManager : MonoBehaviour
             {
                 LevelData asset = JsonUtility.FromJson<LevelData>(InternalLevels[i].text);
                 AllLevels.Add(asset.Name, new LevelAsset(asset));
-                Debug.Log("Level name = " + asset.Name);
             }
         }
+
+        Debug.Log(AllLevels.Count);
     }
 
     private void LoadSaveData()
     {
         // load saved files
-        //string savePath = Path.Combine(Application.streamingAssetsPath, "SavedData");
-        //DirectoryInfo saveDir = new DirectoryInfo(savePath);
-        //FileInfo[] saveInfo = saveDir.GetFiles("*.json");
-        //foreach (FileInfo f in saveInfo)
-        //{
-        //    string key = f.Name.Split('.')[0];
-        //    string json = File.ReadAllText(f.FullName);
-        //    LevelData asset = JsonUtility.FromJson<LevelData>(json);
-        //    AllLevels.Add(asset.Name, new LevelAsset(asset));
-        //}
-        //Debug.Log("Load save data done");
+        string dirPath = Path.Combine(Application.persistentDataPath, "SavedData");
+        if (Directory.Exists(dirPath))
+        {
+            DirectoryInfo saveDir = new DirectoryInfo(dirPath);
+            FileInfo[] saveInfo = saveDir.GetFiles("*.json");
+            foreach (FileInfo f in saveInfo)
+            {
+                string key = f.Name.Split('.')[0];
+                string json = File.ReadAllText(f.FullName);
+                LevelData asset = JsonUtility.FromJson<LevelData>(json);
+                AllSaves.Add(asset.Name, new LevelAsset(asset));
+            }
+        }
+        Debug.Log(AllSaves.Count);
     }
 
+    internal void UpdateSavedData(string key, LevelData data)
+    {
+        if (AllSaves.ContainsKey(key))
+        {
+            AllSaves[key] = new LevelAsset(data);
+        }
+        else
+        {
+            AllSaves.Add(key, new LevelAsset(data));
+        }
+    }
 }

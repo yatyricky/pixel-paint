@@ -15,18 +15,21 @@ public class LevelAsset
         Width = data.Width;
         Height = data.Height;
 
-        Palette = new Color[data.Palette.Length];
-        for (int i = 0; i < Palette.Length; i++)
+        if (data.Palette != null)
         {
-            Color color;
-            string hex = "#" + data.Palette[i];
-            if (ColorUtility.TryParseHtmlString(hex, out color))
+            Palette = new Color[data.Palette.Length];
+            for (int i = 0; i < Palette.Length; i++)
             {
-                Palette[i] = color;
-            }
-            else
-            {
-                throw new Exception("ColorUtility is wrong!");
+                Color color;
+                string hex = "#" + data.Palette[i];
+                if (ColorUtility.TryParseHtmlString(hex, out color))
+                {
+                    Palette[i] = color;
+                }
+                else
+                {
+                    throw new Exception("ColorUtility is wrong!");
+                }
             }
         }
 

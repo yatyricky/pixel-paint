@@ -31,7 +31,6 @@ public class LevelEntrance : MonoBehaviour
 
     internal void SetData(LevelAsset data, LevelAsset save)
     {
-        Debug.Log(data.Width);
         Texture2D image = new Texture2D(data.Width, data.Height);
         float pixelsPerUnit = 0.2f;
         if (data.Height > data.Width)
