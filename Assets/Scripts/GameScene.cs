@@ -19,7 +19,6 @@ public class GameScene : MonoBehaviour
     [HideInInspector] public LevelAsset Level;
     [HideInInspector] public LevelAsset Save;
     public bool touched = false;
-    private string LevelName;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
@@ -131,8 +130,10 @@ public class GameScene : MonoBehaviour
 
         if (touched == true)
         {
+            Debug.Log("Trying to save game");
             SaveGame();
         }
+        HallScene.DispatchRenderLevels();
     }
 
     private void SaveGame()
@@ -150,18 +151,18 @@ public class GameScene : MonoBehaviour
         save.Palette = null;
         save.Width = 0;
         save.Height = 0;
+        save.Name = Level.Name;
 
         string json = JsonUtility.ToJson(save);
-        File.WriteAllText(Path.Combine(Path.Combine(Application.streamingAssetsPath, "SavedData"), LevelName), json);
+        File.WriteAllText(Path.Combine(Path.Combine(Application.streamingAssetsPath, "SavedData"), save.Name + ".json"), json);
     }
 
-    public static void DispatchSetGameData(LevelAsset level, string name, LevelAsset save)
+    public static void DispatchSetGameData(LevelAsset level, LevelAsset save)
     {
         ReceivedActions.Enqueue(() =>
         {
             self.Level = level;
             self.Save = save;
-            self.LevelName = name;
             self.InitPallete();
             self.InitWorld();
         });

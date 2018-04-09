@@ -1,18 +1,11 @@
 ﻿using UnityEngine;
 
-[ExecuteInEditMode]
 public class TwoColumnLayout : MonoBehaviour
 {
 
-    // Use this for initialization
     void Start()
     {
         LayoutChildren();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
     }
 
     public void AddChild(GameObject obj)

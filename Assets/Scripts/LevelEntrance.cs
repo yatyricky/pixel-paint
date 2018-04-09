@@ -8,24 +8,11 @@ public class LevelEntrance : MonoBehaviour
 
     private LevelAsset mData;
     private LevelAsset mSave;
-    private string mName;
 
     private void Awake()
     {
         Button button = gameObject.GetComponent<Button>();
         button.onClick.AddListener(OnClicked);
-    }
-
-    // Use this for initialization
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 
     public void OnClicked()
@@ -37,13 +24,14 @@ public class LevelEntrance : MonoBehaviour
         else
         {
             // TODO SPINNER
-            GameScene.DispatchSetGameData(mData, mName, mSave);
+            GameScene.DispatchSetGameData(mData, mSave);
             SceneManager.LoadScene("Game");
         }
     }
 
-    internal void SetData(LevelAsset data, string name, LevelAsset save)
+    internal void SetData(LevelAsset data, LevelAsset save)
     {
+        Debug.Log(data.Width);
         Texture2D image = new Texture2D(data.Width, data.Height);
         float pixelsPerUnit = 0.2f;
         if (data.Height > data.Width)
@@ -73,6 +61,5 @@ public class LevelEntrance : MonoBehaviour
         mData = data;
 
         mSave = save;
-        mName = name;
     }
 }

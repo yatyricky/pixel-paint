@@ -13,11 +13,19 @@ public class HallScene : MonoBehaviour
     private float CanvasTargetPos = -360f;
     private Vector3 velocity = Vector3.zero;
 
+    private static HallScene self;
+    private static Queue<Action> ReceivedActions = new Queue<Action>();
+
+    private void Awake()
+    {
+        self = this;
+    }
+
     // Use this for initialization
     void Start()
     {
-        LoadLevelData();
-        LoadFavData();
+        //LoadLevelData();
+        //LoadFavData();
     }
 
     private void Update()
@@ -25,6 +33,10 @@ public class HallScene : MonoBehaviour
         if (Mathf.Abs(CanvasTargetPos - Canvas.position.x) > float.Epsilon)
         {
             Canvas.position = Vector3.SmoothDamp(Canvas.position, new Vector3(CanvasTargetPos, Canvas.position.y, 0), ref velocity, 0.1f);
+        }
+        while (ReceivedActions.Count > 0)
+        {
+            ReceivedActions.Dequeue()();
         }
     }
 
@@ -52,7 +64,7 @@ public class HallScene : MonoBehaviour
                 LevelAsset level = new LevelAsset(JsonUtility.FromJson<LevelData>(json));
                 GameObject go = Instantiate(LevelEntrancePrefab);
                 TrendingViewObjects.AddChild(go);
-                go.GetComponent<LevelEntrance>().SetData(level, f.Name, null);
+                go.GetComponent<LevelEntrance>().SetData(level, null);
             }
         }
     }
@@ -84,9 +96,42 @@ public class HallScene : MonoBehaviour
                 LevelAsset level = new LevelAsset(JsonUtility.FromJson<LevelData>(json));
                 GameObject go = Instantiate(LevelEntrancePrefab);
                 FavoriteViewObjects.AddChild(go);
-                go.GetComponent<LevelEntrance>().SetData(level, f.Name, save);
+                go.GetComponent<LevelEntrance>().SetData(level, save);
             }
         }
+    }
+
+    public static void DispatchRenderLevels()
+    {
+        ReceivedActions.Enqueue(() =>
+        {
+            // fill saves
+            foreach (KeyValuePair<string, LevelAsset> entry in DataManager.Instance.AllSaves)
+            {
+                GameObject go = Instantiate(self.LevelEntrancePrefab);
+                self.FavoriteViewObjects.AddChild(go);
+                LevelAsset levelData;
+                if (DataManager.Instance.AllLevels.TryGetValue(entry.Key, out levelData))
+                {
+                    go.GetComponent<LevelEntrance>().SetData(levelData, entry.Value);
+                }
+                else
+                {
+                    throw new Exception("has save without level");
+                }
+            }
+            // fill all levels
+            Debug.Log("Trying to load all levles");
+            foreach (KeyValuePair<string, LevelAsset> entry in DataManager.Instance.AllLevels)
+            {
+                if (!DataManager.Instance.AllSaves.ContainsKey(entry.Key))
+                {
+                    GameObject go = Instantiate(self.LevelEntrancePrefab);
+                    self.TrendingViewObjects.AddChild(go);
+                    go.GetComponent<LevelEntrance>().SetData(entry.Value, null);
+                }
+            }
+        });
     }
 
     private void CanvasSwitchPage(int page)
