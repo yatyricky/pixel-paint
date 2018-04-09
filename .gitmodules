@@ -1,0 +1,3 @@
+[submodule "pixel-paint-server"]
+	path = pixel-paint-server
+	url = https://github.com/yatyricky/pixel-paint-server.git
