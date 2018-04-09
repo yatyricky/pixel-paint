@@ -137,13 +137,13 @@ public class GameScene : MonoBehaviour
 
     private void SaveGame()
     {
-        LevelAsset save = new LevelAsset();
-        Color[] data = new Color[Level.Width * Level.Height];
+        LevelData save = new LevelData();
+        string[] data = new string[Level.Width * Level.Height];
         for (int y = 0; y < Level.Height; y++)
         {
             for (int x = 0; x < Level.Width; x++)
             {
-                data[y * Level.Width + x] = Canvas.GetColor(new Vector3Int(x, y, 0));
+                data[y * Level.Width + x] = ColorUtility.ToHtmlStringRGBA(Canvas.GetColor(new Vector3Int(x, y, 0)));
             }
         }
         save.Data = data;

@@ -49,7 +49,7 @@ public class HallScene : MonoBehaviour
             if (Array.IndexOf<string>(files, f.Name) == -1)
             {
                 string json = File.ReadAllText(f.FullName);
-                LevelAsset level = JsonUtility.FromJson<LevelAsset>(json);
+                LevelAsset level = new LevelAsset(JsonUtility.FromJson<LevelData>(json));
                 GameObject go = Instantiate(LevelEntrancePrefab);
                 TrendingViewObjects.AddChild(go);
                 go.GetComponent<LevelEntrance>().SetData(level, f.Name, null);
@@ -67,7 +67,7 @@ public class HallScene : MonoBehaviour
         foreach (FileInfo f in saveInfo)
         {
             string json = File.ReadAllText(f.FullName);
-            LevelAsset save = JsonUtility.FromJson<LevelAsset>(json);
+            LevelAsset save = new LevelAsset(JsonUtility.FromJson<LevelData>(json));
             saves.Add(f.Name, save);
         }
 
@@ -81,7 +81,7 @@ public class HallScene : MonoBehaviour
             if (saves.TryGetValue(f.Name, out save))
             {
                 string json = File.ReadAllText(f.FullName);
-                LevelAsset level = JsonUtility.FromJson<LevelAsset>(json);
+                LevelAsset level = new LevelAsset(JsonUtility.FromJson<LevelData>(json));
                 GameObject go = Instantiate(LevelEntrancePrefab);
                 FavoriteViewObjects.AddChild(go);
                 go.GetComponent<LevelEntrance>().SetData(level, f.Name, save);

@@ -15,7 +15,8 @@ public class LevelGenerator : MonoBehaviour
     public Texture2D SourceImage;
 
     private Dictionary<string, int> _distinctColors;
-    private Color[] _data;
+    private string[] _data;
+    private string _name;
     private int _height;
     private int _width;
 
@@ -23,13 +24,14 @@ public class LevelGenerator : MonoBehaviour
     public void Preview()
     {
         _distinctColors = new Dictionary<string, int>();
-        _data = new Color[SourceImage.width * SourceImage.height];
+        _data = new string[SourceImage.width * SourceImage.height];
         _width = SourceImage.width;
         _height = SourceImage.height;
+        _name = SourceImage.name;
 
-        for (int y = 0; y < SourceImage.height; y ++)
+        for (int y = 0; y < SourceImage.height; y++)
         {
-            for (int x = 0; x < SourceImage.width; x ++)
+            for (int x = 0; x < SourceImage.width; x++)
             {
                 Color color = SourceImage.GetPixel(x, y);
                 if (color.a == 0f)
@@ -37,7 +39,7 @@ public class LevelGenerator : MonoBehaviour
                     color = new Color(0, 0, 0, 0);
                 }
                 string colorHex = ColorUtility.ToHtmlStringRGBA(color);
-                
+
                 //Debug.Log(x+","+y+":"+ colorHex);
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 Canvas.SetTileFlags(pos, TileFlags.None);
@@ -52,7 +54,7 @@ public class LevelGenerator : MonoBehaviour
                     //Debug.Log("New color " + colorHex);
                     _distinctColors.Add(colorHex, 1);
                 }
-                _data[y * SourceImage.width + x] = color;
+                _data[y * SourceImage.width + x] = colorHex;
             }
         }
     }
@@ -60,28 +62,20 @@ public class LevelGenerator : MonoBehaviour
     public void Generate()
     {
 
-        LevelAsset asset = new LevelAsset();
+        LevelData asset = new LevelData();
         asset.Height = _height;
         asset.Width = _width;
-        List<Color> palette = new List<Color>();
-        for (int i = 0; i < _distinctColors.Count; i ++)
+        asset.Name = _name;
+        List<string> palette = new List<string>();
+        for (int i = 0; i < _distinctColors.Count; i++)
         {
-            string hex = "#" + _distinctColors.ElementAt(i).Key;
-            //Debug.Log(hex);
-            Color color;
-            if (ColorUtility.TryParseHtmlString(hex, out color))
+            string hex = _distinctColors.ElementAt(i).Key;
+            if (!hex.Substring(6).Equals("00"))
             {
-                if (color.a != 0f)
-                {
-                    palette.Add(color);
-                }
-            }
-            else
-            {
-                throw new System.Exception("ColorUtility is wrong!");
+                palette.Add(hex);
             }
         }
-        asset.Palette = palette.ToArray<Color>();
+        asset.Palette = palette.ToArray<string>();
         asset.Data = _data;
 
         string json = JsonUtility.ToJson(asset);
