@@ -38,6 +38,7 @@ public class Player : MonoBehaviour
             // Find the difference in the distances between each frame.
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
             Zoom(deltaMagnitudeDiff / 10.0f);
+            UpdateMarkers();
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
         {
