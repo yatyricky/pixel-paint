@@ -71,8 +71,6 @@ public class DataManager : MonoBehaviour
                 AllLevels.Add(asset.Name, new LevelAsset(asset));
             }
         }
-
-        Debug.Log(AllLevels.Count);
     }
 
     private IEnumerator DownloadNewLevels(string files)
@@ -109,7 +107,6 @@ public class DataManager : MonoBehaviour
                 AllSaves.Add(asset.Name, new LevelAsset(asset));
             }
         }
-        Debug.Log(AllSaves.Count);
     }
 
     internal void UpdateSavedData(string key, LevelData data)

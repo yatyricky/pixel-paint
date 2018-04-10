@@ -57,11 +57,14 @@ public class LevelGenerator : MonoBehaviour
                 _data[y * SourceImage.width + x] = colorHex;
             }
         }
+        Debug.Log("Image: " + _name);
+        Debug.Log("Width: " + _width);
+        Debug.Log("Height: " + _height);
+        Debug.Log("Colors: " + _distinctColors.Count);
     }
 
     public void Generate()
     {
-
         LevelData asset = new LevelData();
         asset.Height = _height;
         asset.Width = _width;
@@ -79,7 +82,8 @@ public class LevelGenerator : MonoBehaviour
         asset.Data = _data;
 
         string json = JsonUtility.ToJson(asset);
-        File.WriteAllText(Path.Combine(Path.Combine(Application.streamingAssetsPath, "LevelData"), SourceImage.name + ".json"), json);
+        File.WriteAllText(Path.Combine(Application.dataPath + "/RawLevel/Levels", SourceImage.name + ".json"), json);
+        Debug.Log("Generate success: " + _name);
     }
 
 }

@@ -571,11 +571,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e78649db746044d4399a5f6131e2766d, type: 2}
   - {fileID: 11400000, guid: 6836dccdc09536c4799460a0b47edd6e, type: 2}
   GameController: {fileID: 1296077694}
-  Level:
-    Width: 0
-    Height: 0
-    Palette: []
-    Data: []
+  touched: 0
 --- !u!4 &467356851
 Transform:
   m_ObjectHideFlags: 0
@@ -1029,8 +1025,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CameraObj: {fileID: 1065426834}
-  perspectiveZoomSpeed: 0.5
-  orthoZoomSpeed: 0.5
   GridObj: {fileID: 566896807}
   TileMapObj: {fileID: 1191064329}
   MarkerOverlay: {fileID: 233921229}
