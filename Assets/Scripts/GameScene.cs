@@ -81,6 +81,29 @@ public class GameScene : MonoBehaviour
         GameController.ZoomTo(camSize);
     }
 
+    internal void HighlightInCanvas(Color color)
+    {
+        for (int i = 0; i < Save.Data.Length; i++)
+        {
+            int y = i / Save.Width;
+            int x = i - y * Save.Width;
+            Vector3Int pos = new Vector3Int(x, y, 0);
+
+            if (IsClickable(pos))
+            {
+                Canvas.SetTileFlags(pos, TileFlags.None);
+                if (color.Equals(Level.Data[i]))
+                {
+                    Canvas.SetColor(pos, new Color(Save.Data[i].r * Configs.HIGHLIGHT_CANVAS_RATIO, Save.Data[i].g * Configs.HIGHLIGHT_CANVAS_RATIO, Save.Data[i].b * Configs.HIGHLIGHT_CANVAS_RATIO, Save.Data[i].a));
+                }
+                else
+                {
+                    Canvas.SetColor(pos, Save.Data[i]);
+                }
+            }
+        }
+    }
+
     internal void Fill(Vector3Int pos, Color color)
     {
         if (IsClickable(pos))
@@ -89,11 +112,8 @@ public class GameScene : MonoBehaviour
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetColor(pos, color);
 
-            if (color.Equals(Level.Data[pos.y * Level.Width + pos.x]))
-            {
-                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-                MarkerOverlay.SetColor(pos, Utils.TRANSPARENT);
-            }
+            MarkerOverlay.SetTileFlags(pos, TileFlags.None);
+            MarkerOverlay.SetColor(pos, MarkerShouldBe(pos));
         }
     }
 
@@ -166,50 +186,56 @@ public class GameScene : MonoBehaviour
         {
             self.Level = level;
             self.Save = save;
-            self.InitPallete();
             self.InitWorld();
+            self.InitPallete();
         });
     }
 
-    internal void UpdateMarkers(float size)
+    private Color MarkerShouldBe(Vector3Int pos)
     {
-        if (size > Configs.ZOOM_HIDE_MARKER)
+        Color color;
+        int index = pos.y * Level.Width + pos.x;
+        // correct fill
+        if (Canvas.GetColor(pos).Equals(Level.Data[index]))
         {
-            // No markers
-            for (int i = 0; i < Level.Data.Length; i++)
-            {
-                int y = i / Level.Width;
-                int x = i - y * Level.Width;
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-                MarkerOverlay.SetColor(pos, new Color(0, 0, 0, 0));
-            }
+            color = new Color(0, 0, 0, 0);
         }
         else
         {
-            float greyColor = 1 - (size - Configs.ZOOM_FADE_MARKER) / (Configs.ZOOM_HIDE_MARKER - Configs.ZOOM_FADE_MARKER);
-            if (greyColor > 1)
+            // too far away
+            if (GameCamera.orthographicSize > Configs.ZOOM_HIDE_MARKER)
             {
-                greyColor = 1;
+                color = new Color(0, 0, 0, 0);
             }
-            // Solid markers
-            for (int i = 0; i < Level.Data.Length; i++)
+            else
             {
-                int y = i / Level.Width;
-                int x = i - y * Level.Width;
-                Vector3Int pos = new Vector3Int(x, y, 0);
+                float greyColor = 1 - (GameCamera.orthographicSize - Configs.ZOOM_FADE_MARKER) / (Configs.ZOOM_HIDE_MARKER - Configs.ZOOM_FADE_MARKER);
+                if (greyColor > 1)
+                {
+                    greyColor = 1;
+                }
+                
+                float black = 0f;
+                if (Save.Data[index].grayscale < Configs.FLIP_MARKER)
+                {
+                    black = 1f;
+                }
+                color = new Color(black, black, black, greyColor);
+            }
+        }
+        return color;
+    }
 
-                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
-                if (Canvas.GetColor(new Vector3Int(x, y, 0)).Equals(Level.Data[i]))
-                {
-                    MarkerOverlay.SetColor(pos, new Color(0, 0, 0, 0));
-                }
-                else
-                {
-                    MarkerOverlay.SetColor(pos, new Color(0, 0, 0, greyColor));
-                }
-            }
+    internal void UpdateMarkers()
+    {
+        for (int i = 0; i < Save.Data.Length; i++)
+        {
+            int y = i / Save.Width;
+            int x = i - y * Save.Width;
+            Vector3Int pos = new Vector3Int(x, y, 0);
+
+            MarkerOverlay.SetTileFlags(pos, TileFlags.None);
+            MarkerOverlay.SetColor(pos, MarkerShouldBe(pos));
         }
     }
 }

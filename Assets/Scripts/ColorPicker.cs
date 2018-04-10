@@ -33,7 +33,7 @@ public class ColorPicker : MonoBehaviour
         Marker.text = i.ToString();
         SelColor = color;
         Background.color = color;
-        if (color.grayscale < 0.5f)
+        if (color.grayscale < Configs.FLIP_MARKER)
         {
             Marker.color = Color.white;
         }

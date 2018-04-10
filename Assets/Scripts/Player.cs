@@ -1,15 +1,10 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.Tilemaps;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     public Camera CameraObj;
 
     public Grid GridObj;
-    public Tilemap TileMapObj;
-    public Tilemap MarkerOverlay;
-    public TileBase EmptyTile;
     public GameScene GameManager;
 
     [HideInInspector] public Color CurrentColor;
@@ -57,6 +52,7 @@ public class Player : MonoBehaviour
     internal void SetBrushColor(Color selColor)
     {
         CurrentColor = selColor;
+        GameManager.HighlightInCanvas(selColor);
     }
 
     private void OnMouseDown()
@@ -130,7 +126,7 @@ public class Player : MonoBehaviour
     {
         if (CameraObj.orthographic)
         {
-            GameManager.UpdateMarkers(CameraObj.orthographicSize);
+            GameManager.UpdateMarkers();
         }
         // else not implemented
     }

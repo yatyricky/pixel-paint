@@ -9,6 +9,8 @@ public class Configs
     public const float ART_IN_WINDOW_RATIO = 0.75f;
     public const float HOLD_TO_FILL_TIME = 0.3f;
     public const float HOLD_TO_FILL_DISTANCE = 1.5f;
+    public const float HIGHLIGHT_CANVAS_RATIO = 0.8f;
+    public const float FLIP_MARKER = 0.5f; // is marker white or black
 
     // UI
     public const float DESIGN_HEIGHT = 1280f;
