@@ -49,6 +49,50 @@ public class LevelAsset
             }
         }
     }
+
+    public LevelAsset(LevelAsset asset, bool toGray)
+    {
+        Name = asset.Name;
+        Width = asset.Width;
+        Height = asset.Height;
+        Palette = new Color[asset.Palette.Length];
+        for (int i = 0; i < Palette.Length; i++)
+        {
+            Palette[i] = new Color(asset.Palette[i].r, asset.Palette[i].g, asset.Palette[i].b, asset.Palette[i].a);
+        }
+        Data = new Color[asset.Data.Length];
+        for (int i = 0; i < Data.Length; i++)
+        {
+            if (toGray)
+            {
+                Data[i] = Utils.ConvertGreyscale(asset.Data[i]);
+            }
+            else
+            {
+                Data[i] = new Color(asset.Data[i].r, asset.Data[i].g, asset.Data[i].b, asset.Data[i].a);
+            }
+        }
+    }
+
+    public LevelData ToLevelData()
+    {
+        LevelData data = new LevelData();
+        data.Name = Name;
+        data.Height = Height;
+        data.Width = Width;
+        data.Palette = new string[Palette.Length];
+        for (int i = 0; i < Palette.Length; i++)
+        {
+            data.Palette[i] = ColorUtility.ToHtmlStringRGBA(Palette[i]);
+        }
+        data.Data = new string[Data.Length];
+        for (int i = 0; i < Data.Length; i++)
+        {
+            data.Data[i] = ColorUtility.ToHtmlStringRGBA(Data[i]);
+        }
+        return data;
+    }
+
 }
 
 [Serializable]

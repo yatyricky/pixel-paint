@@ -109,15 +109,15 @@ public class DataManager : MonoBehaviour
         }
     }
 
-    internal void UpdateSavedData(string key, LevelData data)
+    internal void UpdateSavedData(string key, LevelAsset data)
     {
         if (AllSaves.ContainsKey(key))
         {
-            AllSaves[key] = new LevelAsset(data);
+            AllSaves[key] = data;
         }
         else
         {
-            AllSaves.Add(key, new LevelAsset(data));
+            AllSaves.Add(key, data);
         }
     }
 

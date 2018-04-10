@@ -40,6 +40,10 @@ public class GameScene : MonoBehaviour
     private void InitWorld()
     {
         GameCamera.transform.position = new Vector3(Level.Width / 2, Level.Height / 2, -20);
+        if (Save == null)
+        {
+            Save = new LevelAsset(Level, true);
+        }
         for (int i = 0; i < Level.Data.Length; i ++)
         {
             int y = i / Level.Width;
@@ -51,14 +55,7 @@ public class GameScene : MonoBehaviour
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetTile(pos, WhiteTile);
             Canvas.SetTileFlags(pos, TileFlags.None);
-            if (Save != null)
-            {
-                Canvas.SetColor(pos, Save.Data[i]);
-            }
-            else
-            {
-                Canvas.SetColor(pos, Utils.ConvertGreyscale(color));
-            }
+            Canvas.SetColor(pos, Save.Data[i]);
 
             MarkerOverlay.SetTileFlags(pos, TileFlags.None);
             if (color.a != 0f)
@@ -82,6 +79,22 @@ public class GameScene : MonoBehaviour
             camSize = widthPixels / Configs.PIXEL_WIDTH_CAM_RATIO;
         }
         GameController.ZoomTo(camSize);
+    }
+
+    internal void Fill(Vector3Int pos, Color color)
+    {
+        if (IsClickable(pos))
+        {
+            Save.Data[pos.y * Save.Width + pos.x] = color;
+            Canvas.SetTileFlags(pos, TileFlags.None);
+            Canvas.SetColor(pos, color);
+
+            if (color.Equals(Level.Data[pos.y * Level.Width + pos.x]))
+            {
+                MarkerOverlay.SetTileFlags(pos, TileFlags.None);
+                MarkerOverlay.SetColor(pos, Utils.TRANSPARENT);
+            }
+        }
     }
 
     private void InitPallete()
@@ -137,29 +150,14 @@ public class GameScene : MonoBehaviour
 
     private void SaveGame()
     {
-        LevelData save = new LevelData();
-        string[] data = new string[Level.Width * Level.Height];
-        for (int y = 0; y < Level.Height; y++)
-        {
-            for (int x = 0; x < Level.Width; x++)
-            {
-                data[y * Level.Width + x] = ColorUtility.ToHtmlStringRGBA(Canvas.GetColor(new Vector3Int(x, y, 0)));
-            }
-        }
-        save.Data = data;
-        save.Palette = null;
-        save.Width = 0;
-        save.Height = 0;
-        save.Name = Level.Name;
-
-        string json = JsonUtility.ToJson(save);
+        string json = JsonUtility.ToJson(Save.ToLevelData());
         string dirPath = Path.Combine(Application.persistentDataPath, "SavedData");
         if (!Directory.Exists(dirPath))
         {
             Directory.CreateDirectory(dirPath);
         }
-        File.WriteAllText(Path.Combine(dirPath, save.Name + ".json"), json);
-        DataManager.Instance.UpdateSavedData(Level.Name, save);
+        File.WriteAllText(Path.Combine(dirPath, Save.Name + ".json"), json);
+        DataManager.Instance.UpdateSavedData(Level.Name, Save);
     }
 
     public static void DispatchSetGameData(LevelAsset level, LevelAsset save)

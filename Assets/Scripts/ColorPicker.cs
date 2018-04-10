@@ -23,7 +23,7 @@ public class ColorPicker : MonoBehaviour
             Prev.CheckMark.SetActive(false);
         }
         Player p = GameObject.FindGameObjectWithTag("GameController").GetComponent<Player>();
-        p.CurrentColor = SelColor;
+        p.SetBrushColor(SelColor);
         CheckMark.SetActive(true);
         Prev = this;
     }

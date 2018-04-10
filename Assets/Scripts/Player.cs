@@ -19,7 +19,6 @@ public class Player : MonoBehaviour
     private float fillModeTimer = 0f;
     private Vector2 fillModeMovement = Vector2.zero;
     private float maxCam;
-    public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
     void Update()
     {
@@ -55,6 +54,11 @@ public class Player : MonoBehaviour
         }
     }
 
+    internal void SetBrushColor(Color selColor)
+    {
+        CurrentColor = selColor;
+    }
+
     private void OnMouseDown()
     {
         justDragged = false;
@@ -68,25 +72,7 @@ public class Player : MonoBehaviour
         Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
         Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
         Vector3Int position = GridObj.WorldToCell(worldPoint);
-
-        if (GameManager.IsClickable(position))
-        {
-            TileMapObj.SetTileFlags(position, TileFlags.None);
-            TileMapObj.SetTile(position, EmptyTile);
-            TileMapObj.SetTileFlags(position, TileFlags.None);
-            TileMapObj.SetColor(position, CurrentColor);
-
-            if (CurrentColor.Equals(GameManager.Level.Data[position.y * GameManager.Level.Width + position.x]))
-            {
-                MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                MarkerOverlay.SetColor(position, TRANSPARENT);
-            }
-            else
-            {
-                MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                MarkerOverlay.SetColor(position, Color.black);
-            }
-        }
+        GameManager.Fill(position, CurrentColor);
     }
 
     // clicked on a pixel
