@@ -15,6 +15,9 @@ public class Player : MonoBehaviour
     [HideInInspector] public Color CurrentColor;
 
     private bool justDragged = false;
+    private bool fillMode = false;
+    private float fillModeTimer = 0f;
+    private Vector2 fillModeMovement = Vector2.zero;
     private float maxCam;
     public static Color TRANSPARENT = new Color(0, 0, 0, 0);
 
@@ -55,6 +58,35 @@ public class Player : MonoBehaviour
     private void OnMouseDown()
     {
         justDragged = false;
+        fillModeTimer = 0f;
+        fillModeMovement = Vector2.zero;
+        fillMode = false;
+    }
+
+    private void FillCell()
+    {
+        Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
+        Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
+        Vector3Int position = GridObj.WorldToCell(worldPoint);
+
+        if (GameManager.IsClickable(position))
+        {
+            TileMapObj.SetTileFlags(position, TileFlags.None);
+            TileMapObj.SetTile(position, EmptyTile);
+            TileMapObj.SetTileFlags(position, TileFlags.None);
+            TileMapObj.SetColor(position, CurrentColor);
+
+            if (CurrentColor.Equals(GameManager.Level.Data[position.y * GameManager.Level.Width + position.x]))
+            {
+                MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                MarkerOverlay.SetColor(position, TRANSPARENT);
+            }
+            else
+            {
+                MarkerOverlay.SetTileFlags(position, TileFlags.None);
+                MarkerOverlay.SetColor(position, Color.black);
+            }
+        }
     }
 
     // clicked on a pixel
@@ -62,30 +94,7 @@ public class Player : MonoBehaviour
     {
         if (justDragged == false)
         {
-            Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
-            // get the collision point of the ray with the z = 0 plane
-            Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
-            Vector3Int position = GridObj.WorldToCell(worldPoint);
-
-            if (GameManager.IsClickable(position))
-            {
-                TileMapObj.SetTileFlags(position, TileFlags.None);
-                TileMapObj.SetTile(position, EmptyTile);
-                TileMapObj.SetTileFlags(position, TileFlags.None);
-                TileMapObj.SetColor(position, CurrentColor);
-
-                if (CurrentColor.Equals(GameManager.Level.Data[position.y * GameManager.Level.Width + position.x]))
-                {
-                    MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                    MarkerOverlay.SetColor(position, TRANSPARENT);
-                }
-                else
-                {
-                    MarkerOverlay.SetTileFlags(position, TileFlags.None);
-                    MarkerOverlay.SetColor(position, Color.black);
-                }
-            }
-
+            FillCell();
             // Touched, should save
             GameManager.touched = true;
         }
@@ -104,12 +113,30 @@ public class Player : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        float x = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.x / Screen.width / Configs.WINDOW_RATIO;
-        float y = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.y / Screen.height / Configs.WINDOW_HEIGHT * Configs.DESIGN_HEIGHT;
-        CameraObj.transform.Translate(new Vector3(x, y, 0));
-        if (MouseHelper.mouseDelta.magnitude > 0.5f)
+        if (fillMode)
         {
-            justDragged = true;
+            FillCell();
+        }
+        else
+        {
+            float x = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.x / Screen.width / Configs.WINDOW_RATIO;
+            float y = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.y / Screen.height / Configs.WINDOW_HEIGHT * Configs.DESIGN_HEIGHT;
+            CameraObj.transform.Translate(new Vector3(x, y, 0));
+            if (MouseHelper.mouseDelta.magnitude > 0.5f)
+            {
+                justDragged = true;
+            }
+
+            // Detecting fill mode
+            fillModeTimer += Time.deltaTime;
+            fillModeMovement += MouseHelper.mouseDelta;
+            if (fillModeTimer > Configs.HOLD_TO_FILL_TIME)
+            {
+                if (fillModeMovement.magnitude < Configs.HOLD_TO_FILL_DISTANCE)
+                {
+                    fillMode = true;
+                }
+            }
         }
     }
 
