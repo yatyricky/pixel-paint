@@ -18,7 +18,7 @@ public class GameScene : MonoBehaviour
     public Player GameController;
     [HideInInspector] public LevelAsset Level;
     [HideInInspector] public LevelAsset Save;
-    public bool touched = false;
+    [HideInInspector] public bool touched = false;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
