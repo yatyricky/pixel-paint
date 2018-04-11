@@ -68,6 +68,10 @@ public class HallScene : MonoBehaviour
                     }
                 }
             }
+            if (DataManager.Instance.AllSaves.Count == 0)
+            {
+                self.CanvasSwitchPage(0);
+            }
         });
     }
 
