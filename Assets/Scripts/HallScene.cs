@@ -23,7 +23,7 @@ public class HallScene : MonoBehaviour
 
     private void Update()
     {
-        if (Mathf.Abs(CanvasTargetPos - Canvas.position.x) > float.Epsilon)
+        if (Mathf.Abs(CanvasTargetPos - Canvas.position.x) > Configs.BIG_EPSILON)
         {
             Canvas.position = Vector3.SmoothDamp(Canvas.position, new Vector3(CanvasTargetPos, Canvas.position.y, 0), ref velocity, 0.1f);
         }

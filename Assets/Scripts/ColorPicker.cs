@@ -8,6 +8,7 @@ public class ColorPicker : MonoBehaviour
     public Image Background;
     public GameObject CheckMark;
 
+    private int index;
     private static ColorPicker Prev;
 
     private void Awake()
@@ -26,11 +27,15 @@ public class ColorPicker : MonoBehaviour
         p.SetBrushColor(SelColor);
         CheckMark.SetActive(true);
         Prev = this;
+
+        // scroll to middle
+        transform.parent.gameObject.GetComponent<PaletteTender>().AnimateTo(index);
     }
 
     internal void Init(Color color, int i)
     {
         Marker.text = i.ToString();
+        index = i;
         SelColor = color;
         Background.color = color;
         if (color.grayscale < Configs.FLIP_MARKER)

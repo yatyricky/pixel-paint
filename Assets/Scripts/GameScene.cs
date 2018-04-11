@@ -120,7 +120,11 @@ public class GameScene : MonoBehaviour
     private void InitPallete()
     {
         ColorPicker firstPicker = null;
-        PallateContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(Level.Palette.Length * 144, 0);
+        float width = Level.Palette.Length * Configs.PALETTE_WIDTH;
+        PallateContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 0);
+        BoxCollider collider = PallateContainer.GetComponent<BoxCollider>();
+        collider.size = new Vector3(width, collider.size.y, collider.size.z);
+        collider.center = new Vector3(width / 2f, collider.center.y, collider.center.z);
         for (int i = 0; i < Level.Palette.Length; i ++)
         {
             GameObject go = Instantiate(ColorPickerPrefab);
