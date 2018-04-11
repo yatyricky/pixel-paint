@@ -621,7 +621,7 @@ Grid:
   m_GameObject: {fileID: 566896805}
   m_Enabled: 1
   m_CellSize: {x: 1, y: 1, z: 0}
-  m_CellGap: {x: 0, y: 0, z: 0}
+  m_CellGap: {x: 0.02, y: 0.02, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
 --- !u!1 &810480534
@@ -1020,9 +1020,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CameraObj: {fileID: 1065426834}
   GridObj: {fileID: 566896807}
-  TileMapObj: {fileID: 1191064329}
-  MarkerOverlay: {fileID: 233921229}
-  EmptyTile: {fileID: 11400000, guid: ce0ca79193f250340bb83c61e7c32aa6, type: 2}
   GameManager: {fileID: 467356850}
   CurrentColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!65 &1296077695
