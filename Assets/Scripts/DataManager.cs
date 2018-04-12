@@ -39,7 +39,6 @@ public class DataManager : MonoBehaviour
     private void LoadLevelData()
     {
         // load streamed level first
-        List<string> fileList = new List<string>();
         string dirPath = Path.Combine(Application.persistentDataPath, "LevelData");
         if (Directory.Exists(dirPath))
         {
@@ -48,7 +47,6 @@ public class DataManager : MonoBehaviour
             foreach (FileInfo f in saveInfo)
             {
                 string key = f.Name.Split('.')[0];
-                fileList.Add(key);
                 string json = File.ReadAllText(f.FullName);
                 LevelData asset = JsonUtility.FromJson<LevelData>(json);
                 AllLevels.Add(asset.Name, new LevelAsset(asset));
@@ -59,9 +57,6 @@ public class DataManager : MonoBehaviour
             Directory.CreateDirectory(dirPath);
         }
 
-        // get updates
-        StartCoroutine(DownloadNewLevels(string.Join(",", fileList.ToArray())));
-
         // Load internal levels
         for (int i = 0; i < InternalLevels.Length; i++)
         {
@@ -71,6 +66,16 @@ public class DataManager : MonoBehaviour
                 AllLevels.Add(asset.Name, new LevelAsset(asset));
             }
         }
+
+        // get updates
+        RequestUpdateLevels();
+    }
+
+    public void RequestUpdateLevels()
+    {
+        string[] keys = new string[AllLevels.Keys.Count];
+        AllLevels.Keys.CopyTo(keys, 0);
+        StartCoroutine(DownloadNewLevels(string.Join(",", keys)));
     }
 
     private IEnumerator DownloadNewLevels(string files)

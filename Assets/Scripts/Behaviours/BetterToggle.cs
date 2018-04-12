@@ -22,7 +22,7 @@ public class BetterToggle : MonoBehaviour
         Group = transform.parent.gameObject.GetComponent<BetterToggleGroup>();
     }
 
-    private void OnClicked()
+    public void OnClicked()
     {
         Group.Activate(this);
     }

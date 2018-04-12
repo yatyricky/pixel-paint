@@ -9,6 +9,7 @@ public class HallScene : MonoBehaviour
     public TwoColumnLayout TrendingViewObjects;
     public TwoColumnLayout FavoriteViewObjects;
     public RectTransform Canvas;
+    public BetterToggle TrendingToggle;
 
     private float CanvasTargetPos = -360f;
     private Vector3 velocity = Vector3.zero;
@@ -70,8 +71,10 @@ public class HallScene : MonoBehaviour
             }
             if (DataManager.Instance.AllSaves.Count == 0)
             {
-                self.CanvasSwitchPage(0);
+                self.TrendingToggle.OnClicked();
+                self.OnClickedTrending();
             }
+            self.TrendingViewObjects.transform.parent.GetComponent<TrendingContents>().CompleteLoad();
         });
     }
 
