@@ -10,6 +10,8 @@ public class Configs
     public const float HOLD_TO_FILL_TIME = 0.3f;
     public const float HOLD_TO_FILL_DISTANCE = 1.5f;
     public const float HIGHLIGHT_CANVAS_RATIO = 0.8f;
+    public const float AUTO_GREY_SCALE_RANGE_S = 0.5f;
+    public const float AUTO_GREY_SCALE_RANGE_E = 0.9f;
     public const float FLIP_MARKER = 0.5f; // is marker white or black
     public const float BIG_EPSILON = 0.01f;
 
