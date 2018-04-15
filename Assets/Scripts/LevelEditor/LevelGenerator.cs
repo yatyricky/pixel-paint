@@ -40,7 +40,6 @@ public class LevelGenerator : MonoBehaviour
                 }
                 string colorHex = ColorUtility.ToHtmlStringRGBA(color);
 
-                //Debug.Log(x+","+y+":"+ colorHex);
                 Vector3Int pos = new Vector3Int(x, y, 0);
                 Canvas.SetTileFlags(pos, TileFlags.None);
                 Canvas.SetTile(pos, WhiteTile);
@@ -51,7 +50,6 @@ public class LevelGenerator : MonoBehaviour
                 int test;
                 if (!_distinctColors.TryGetValue(colorHex, out test))
                 {
-                    //Debug.Log("New color " + colorHex);
                     _distinctColors.Add(colorHex, 1);
                 }
                 _data[y * SourceImage.width + x] = colorHex;

@@ -50,7 +50,6 @@ public class GameScene : MonoBehaviour
             int x = i - y * Level.Width;
             Color color = Level.Data[i];
 
-            //Debug.Log(x+","+y+":"+ colorHex);
             Vector3Int pos = new Vector3Int(x, y, 0);
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetTile(pos, WhiteTile);

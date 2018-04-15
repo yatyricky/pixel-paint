@@ -14,9 +14,14 @@ public class Player : MonoBehaviour
     private float fillModeTimer = 0f;
     private Vector2 fillModeMovement = Vector2.zero;
     private float maxCam;
+    private bool hasMoreFingerTouched;
 
     void Update()
     {
+        if (Input.touchCount > 1)
+        {
+            hasMoreFingerTouched = true;
+        }
         // If there are two touches on the device...
         if (Input.touchCount == 2)
         {
@@ -34,7 +39,7 @@ public class Player : MonoBehaviour
 
             // Find the difference in the distances between each frame.
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-            Zoom(deltaMagnitudeDiff / 10.0f);
+            Zoom(deltaMagnitudeDiff / Screen.width * CameraObj.orthographicSize);
             UpdateMarkers();
         }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f)
@@ -57,6 +62,7 @@ public class Player : MonoBehaviour
 
     private void OnMouseDown()
     {
+        hasMoreFingerTouched = false;
         justDragged = false;
         fillModeTimer = 0f;
         fillModeMovement = Vector2.zero;
@@ -74,7 +80,7 @@ public class Player : MonoBehaviour
     // clicked on a pixel
     private void OnMouseUp()
     {
-        if (justDragged == false)
+        if (justDragged == false && !hasMoreFingerTouched)
         {
             FillCell();
             // Touched, should save
@@ -95,28 +101,32 @@ public class Player : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (fillMode)
+        // if (true)
+        if (Input.touchCount == 1)
         {
-            FillCell();
-        }
-        else
-        {
-            float x = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.x / Screen.width / Configs.WINDOW_RATIO;
-            float y = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.y / Screen.height / Configs.WINDOW_HEIGHT * Configs.DESIGN_HEIGHT;
-            CameraObj.transform.Translate(new Vector3(x, y, 0));
-            if (MouseHelper.mouseDelta.magnitude > 0.5f)
+            if (fillMode)
             {
-                justDragged = true;
+                FillCell();
             }
-
-            // Detecting fill mode
-            fillModeTimer += Time.deltaTime;
-            fillModeMovement += MouseHelper.mouseDelta;
-            if (fillModeTimer > Configs.HOLD_TO_FILL_TIME)
+            else
             {
-                if (fillModeMovement.magnitude < Configs.HOLD_TO_FILL_DISTANCE)
+                float x = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.x / Screen.width / Configs.WINDOW_RATIO;
+                float y = 0f - CameraObj.orthographicSize * 2 * MouseHelper.mouseDelta.y / Screen.height / Configs.WINDOW_HEIGHT * Configs.DESIGN_HEIGHT;
+                CameraObj.transform.Translate(new Vector3(x, y, 0));
+                if (MouseHelper.mouseDelta.magnitude > 0.5f)
                 {
-                    fillMode = true;
+                    justDragged = true;
+                }
+
+                // Detecting fill mode
+                fillModeTimer += Time.deltaTime;
+                fillModeMovement += MouseHelper.mouseDelta;
+                if (fillModeTimer > Configs.HOLD_TO_FILL_TIME)
+                {
+                    if (fillModeMovement.magnitude < Configs.HOLD_TO_FILL_DISTANCE)
+                    {
+                        fillMode = true;
+                    }
                 }
             }
         }
