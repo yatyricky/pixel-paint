@@ -14,8 +14,8 @@ public class GameScene : MonoBehaviour
     public GameObject ColorPickerPrefab;
     public Tilemap Canvas;
     public Tilemap MarkerOverlay;
-    public TileBase[] Markers;
     public Player GameController;
+    public TileBase[] Markers;
     [HideInInspector] public LevelAsset Level;
     [HideInInspector] public LevelAsset Save;
     [HideInInspector] public bool touched = false;
@@ -112,12 +112,36 @@ public class GameScene : MonoBehaviour
     {
         if (IsClickable(pos))
         {
+            // fill clicked cell with picked color
             Save.Data[pos.y * Save.Width + pos.x] = color;
             Canvas.SetTileFlags(pos, TileFlags.None);
             Canvas.SetColor(pos, color);
 
+            // update marker based on filled color grey scale
             MarkerOverlay.SetTileFlags(pos, TileFlags.None);
             MarkerOverlay.SetColor(pos, MarkerShouldBe(pos));
+
+            // set marker to completed state
+            UpdatePicker();
+        }
+    }
+
+    private void UpdatePicker()
+    {
+        bool completed = true;
+        for (int i = 0; i < Level.Data.Length && completed; i ++)
+        {
+            if (Level.Data[i].Equals(GameController.CurrentColor.SelColor))
+            {
+                if (!Level.Data[i].Equals(Save.Data[i]))
+                {
+                    completed = false;
+                }
+            }
+        }
+        if (completed)
+        {
+            GameController.CurrentColor.SetComplete();
         }
     }
 

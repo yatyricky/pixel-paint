@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ColorPicker : MonoBehaviour
@@ -24,7 +25,7 @@ public class ColorPicker : MonoBehaviour
             Prev.CheckMark.SetActive(false);
         }
         Player p = GameObject.FindGameObjectWithTag("GameController").GetComponent<Player>();
-        p.SetBrushColor(SelColor);
+        p.SetBrushColor(this);
         CheckMark.SetActive(true);
         Prev = this;
 
@@ -42,5 +43,10 @@ public class ColorPicker : MonoBehaviour
         {
             Marker.color = Color.white;
         }
+    }
+
+    internal void SetComplete()
+    {
+        Marker.text = "√";
     }
 }

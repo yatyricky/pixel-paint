@@ -7,7 +7,7 @@ public class Player : MonoBehaviour
     public Grid GridObj;
     public GameScene GameManager;
 
-    [HideInInspector] public Color CurrentColor;
+    [HideInInspector] public ColorPicker CurrentColor;
 
     private bool justDragged = false;
     private bool fillMode = false;
@@ -54,10 +54,10 @@ public class Player : MonoBehaviour
         }
     }
 
-    internal void SetBrushColor(Color selColor)
+    internal void SetBrushColor(ColorPicker selColor)
     {
         CurrentColor = selColor;
-        GameManager.HighlightInCanvas(selColor);
+        GameManager.HighlightInCanvas(selColor.SelColor);
     }
 
     private void OnMouseDown()
@@ -74,7 +74,7 @@ public class Player : MonoBehaviour
         Ray ray = CameraObj.ScreenPointToRay(Input.mousePosition);
         Vector3 worldPoint = ray.GetPoint(-ray.origin.z / ray.direction.z);
         Vector3Int position = GridObj.WorldToCell(worldPoint);
-        GameManager.Fill(position, CurrentColor);
+        GameManager.Fill(position, CurrentColor.SelColor);
     }
 
     // clicked on a pixel

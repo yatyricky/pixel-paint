@@ -526,6 +526,7 @@ MonoBehaviour:
     type: 2}
   Canvas: {fileID: 1191064329}
   MarkerOverlay: {fileID: 233921229}
+  GameController: {fileID: 1296077694}
   Markers:
   - {fileID: 11400000, guid: d2380d6cb9714c14590eb993f0260f54, type: 2}
   - {fileID: 11400000, guid: 0abfb791ee192984f8381f8dbb871f1a, type: 2}
@@ -567,7 +568,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a7b293420f949d14d9643b92a2a572ec, type: 2}
   - {fileID: 11400000, guid: bf28b827833bb78489e69b54d3d937ab, type: 2}
   - {fileID: 11400000, guid: 69d72f2f6988403449c050202a8b20d4, type: 2}
-  GameController: {fileID: 1296077694}
   touched: 0
 --- !u!4 &467356851
 Transform:
@@ -1021,7 +1021,7 @@ MonoBehaviour:
   CameraObj: {fileID: 1065426834}
   GridObj: {fileID: 566896807}
   GameManager: {fileID: 467356850}
-  CurrentColor: {r: 0, g: 0, b: 0, a: 0}
+  CurrentColor: {fileID: 0}
 --- !u!65 &1296077695
 BoxCollider:
   m_ObjectHideFlags: 0
