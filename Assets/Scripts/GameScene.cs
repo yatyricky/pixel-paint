@@ -37,6 +37,11 @@ public class GameScene : MonoBehaviour
         }
     }
 
+    private void OnApplicationPause(bool pause)
+    {
+        SaveGame();
+    }
+
     private void InitWorld()
     {
         GameCamera.transform.position = new Vector3(Level.Width / 2, Level.Height / 2, -20);
