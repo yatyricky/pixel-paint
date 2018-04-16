@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System.Linq;
 
 public class GameScene : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class GameScene : MonoBehaviour
     [HideInInspector] public LevelAsset Level;
     [HideInInspector] public LevelAsset Save;
     [HideInInspector] public bool touched = false;
+
+    private List<ColorPicker> Pickers;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
@@ -145,8 +148,41 @@ public class GameScene : MonoBehaviour
         }
     }
 
+    private void UpdatePickerAll()
+    {
+        bool[] completed = new bool[Pickers.Count];
+        for (int i = 0; i < completed.Length; i ++)
+        {
+            completed[i] = true;
+        }
+        Dictionary<string, int> dict = new Dictionary<string, int>();
+        for (int i = 0; i < Pickers.Count; i ++)
+        {
+            dict.Add(ColorUtility.ToHtmlStringRGBA(Pickers.ElementAt(i).SelColor), i);
+        }
+        for (int i = 0; i < Level.Data.Length; i++)
+        {
+            int index;
+            if (dict.TryGetValue(ColorUtility.ToHtmlStringRGBA(Level.Data[i]), out index))
+            {
+                if (!Level.Data[i].Equals(Save.Data[i]) && completed[index])
+                {
+                    completed[index] = false;
+                }
+            }
+        }
+        for (int i = 0; i < completed.Length; i++)
+        {
+            if (completed[i])
+            {
+                Pickers.ElementAt(i).SetComplete();
+            }
+        }
+    }
+
     private void InitPallete()
     {
+        Pickers = new List<ColorPicker>();
         ColorPicker firstPicker = null;
         float width = Level.Palette.Length * Configs.PALETTE_WIDTH;
         PallateContainer.GetComponent<RectTransform>().sizeDelta = new Vector2(width, 0);
@@ -163,8 +199,12 @@ public class GameScene : MonoBehaviour
             {
                 firstPicker = colorPicker;
             }
+            Pickers.Add(colorPicker);
         }
         firstPicker.ColorPicked();
+
+        // update all pickers
+        UpdatePickerAll();
     }
 
     internal bool IsClickable(Vector3Int position)
