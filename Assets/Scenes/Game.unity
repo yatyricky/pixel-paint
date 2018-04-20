@@ -569,6 +569,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bf28b827833bb78489e69b54d3d937ab, type: 2}
   - {fileID: 11400000, guid: 69d72f2f6988403449c050202a8b20d4, type: 2}
   touched: 0
+  BackButton: {fileID: 1857894676}
+  BackButtonTopMargin: 72
 --- !u!4 &467356851
 Transform:
   m_ObjectHideFlags: 0
@@ -673,7 +675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.128}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -815,24 +817,24 @@ Camera:
   m_GameObject: {fileID: 1065426830}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 3
+  m_ClearFlags: 2
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0
-    y: 0.1125
+    y: 0
     width: 1
-    height: 0.775
+    height: 1
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
   orthographic: 1
   orthographic size: 40
-  m_Depth: 0
+  m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: 1
+  m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
@@ -1003,7 +1005,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.1125}
-  m_AnchorMax: {x: 1, y: 0.8875}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1032,7 +1034,7 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 720, y: 992, z: 1}
+  m_Size: {x: 720, y: 1136, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1541468356
 GameObject:
@@ -1155,11 +1157,11 @@ RectTransform:
   m_Father: {fileID: 502261}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0.8875}
-  m_AnchorMax: {x: 0.2, y: 1}
-  m_AnchoredPosition: {x: 3.4936829, y: 0}
-  m_SizeDelta: {x: -90.291306, y: -90.42992}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 72, y: -72}
+  m_SizeDelta: {x: 53.708694, y: 53.57007}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1857894678
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1177,7 +1179,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -1347,7 +1349,7 @@ Camera:
   m_GameObject: {fileID: 2047817779}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 3
   m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
@@ -1360,11 +1362,11 @@ Camera:
   field of view: 9.189225
   orthographic: 1
   orthographic size: 640
-  m_Depth: -1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingPath: -1
+  m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3

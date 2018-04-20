@@ -65,7 +65,7 @@ public class LevelAsset
         {
             if (toGray)
             {
-                Data[i] = Utils.ConvertGreyscale(asset.Data[i]);
+                Data[i] = SmallTricks.Utils.ConvertGreyscale(asset.Data[i]);
             }
             else
             {

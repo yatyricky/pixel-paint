@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System.Linq;
+using GoogleMobileAds.Api;
 
 public class GameScene : MonoBehaviour
 {
@@ -21,7 +22,12 @@ public class GameScene : MonoBehaviour
     [HideInInspector] public LevelAsset Save;
     [HideInInspector] public bool touched = false;
 
+    [Header("UI")]
+    public GameObject BackButton;
+    public float BackButtonTopMargin;
+
     private List<ColorPicker> Pickers;
+    private BannerView bannerView;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
@@ -29,6 +35,11 @@ public class GameScene : MonoBehaviour
     private void Awake()
     {
         self = this;
+    }
+
+    private void Start()
+    {
+        RequestBanner();
     }
 
     // Update is called once per frame
@@ -43,6 +54,39 @@ public class GameScene : MonoBehaviour
     private void OnApplicationPause(bool pause)
     {
         SaveGame();
+    }
+
+    // a_bann_test:    ca-app-pub-3940256099942544/6300978111
+    // andriod_banner: ca-app-pub-7959728254107074/9782059553
+    // ios_banner:     ca-app-pub-7959728254107074/7566959755
+    // andriod_inters: ca-app-pub-7959728254107074/9398916175
+    // ios_interstiti: ca-app-pub-7959728254107074/8113754665
+    private void RequestBanner()
+    {
+#if UNITY_ANDROID
+        string adUnitId = "ca-app-pub-7959728254107074/9782059553";
+#elif UNITY_IOS
+        string adUnitId = "ca-app-pub-7959728254107074/7566959755";
+#else
+        string adUnitId = "unexpected_platform";
+#endif
+        // Create a 320x50 banner at the top of the screen.
+        bannerView = new BannerView(adUnitId, AdSize.SmartBanner, AdPosition.Top);
+
+        // Called when an ad request has successfully loaded.
+        bannerView.OnAdLoaded += HandleOnAdLoaded;
+
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+
+        // Load the banner with the request.
+        bannerView.LoadAd(request);
+    }
+
+    private void HandleOnAdLoaded(object sender, EventArgs e)
+    {
+        // move down back button
+        DispatchReposYBackButton(0f - (bannerView.GetHeightInPixels() / Screen.height + BackButtonTopMargin / Configs.DESIGN_HEIGHT) * Configs.DESIGN_HEIGHT);
     }
 
     private void InitWorld()
@@ -126,6 +170,8 @@ public class GameScene : MonoBehaviour
 
             // set marker to completed state
             UpdatePicker();
+
+            touched = true;
         }
     }
 
@@ -237,6 +283,7 @@ public class GameScene : MonoBehaviour
         {
             SaveGame();
         }
+        bannerView.Destroy();
         HallScene.DispatchRenderLevels();
     }
 
@@ -260,6 +307,15 @@ public class GameScene : MonoBehaviour
             self.Save = save;
             self.InitWorld();
             self.InitPallete();
+        });
+    }
+
+    public static void DispatchReposYBackButton(float y)
+    {
+        ReceivedActions.Enqueue(() =>
+        {
+            RectTransform rt = self.BackButton.GetComponent<RectTransform>();
+            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
         });
     }
 
@@ -311,3 +367,4 @@ public class GameScene : MonoBehaviour
         }
     }
 }
+ 

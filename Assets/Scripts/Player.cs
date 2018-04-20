@@ -83,8 +83,6 @@ public class Player : MonoBehaviour
         if (justDragged == false && !hasMoreFingerTouched)
         {
             FillCell();
-            // Touched, should save
-            GameManager.touched = true;
         }
     }
 
@@ -101,8 +99,7 @@ public class Player : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        // if (true)
-        if (Input.touchCount == 1)
+        if (Input.touchCount < 2)
         {
             if (fillMode)
             {

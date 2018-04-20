@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoogleMobileAds.Api;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -27,6 +28,16 @@ public class DataManager : MonoBehaviour
 
         AllLevels = new Dictionary<string, LevelAsset>();
         AllSaves = new Dictionary<string, LevelAsset>();
+
+        // Initialize the Google Mobile Ads SDK.
+#if UNITY_ANDROID
+        string appId = "ca-app-pub-7959728254107074~3791366270";
+#elif UNITY_IOS
+        string appId = "ca-app-pub-7959728254107074~6556473878";
+#else
+        string appId = "unexpected_platform";
+#endif
+        MobileAds.Initialize(appId);
     }
 
     private void Start()

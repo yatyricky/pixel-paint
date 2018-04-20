@@ -50,7 +50,7 @@ public class LevelEntrance : MonoBehaviour
             Color[] greyed = new Color[data.Data.Length];
             for (int i = 0; i < data.Data.Length; i ++)
             {
-                greyed[i] = Utils.ConvertGreyscale(data.Data[i]);
+                greyed[i] = SmallTricks.Utils.ConvertGreyscale(data.Data[i]);
             }
             image.SetPixels(greyed);
         }
