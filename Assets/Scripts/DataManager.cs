@@ -7,25 +7,32 @@ using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
-    public static DataManager Instance;
+    public static DataManager Instance = null;
 
     public TextAsset[] InternalLevels;
 
     public Dictionary<string, LevelAsset> AllLevels;
     public Dictionary<string, LevelAsset> AllSaves;
 
+    private bool interstitialAdCDRunning;
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            Initialization();
         }
         else if (Instance != this)
         {
             Destroy(gameObject);
         }
-        DontDestroyOnLoad(gameObject);
+    }
 
+    private void Initialization()
+    {
         AllLevels = new Dictionary<string, LevelAsset>();
         AllSaves = new Dictionary<string, LevelAsset>();
 
@@ -38,10 +45,8 @@ public class DataManager : MonoBehaviour
         string appId = "unexpected_platform";
 #endif
         MobileAds.Initialize(appId);
-    }
 
-    private void Start()
-    {
+        interstitialAdCDRunning = false;
         LoadLevelData();
         LoadSaveData();
         HallScene.DispatchRenderLevels();
@@ -156,5 +161,25 @@ public class DataManager : MonoBehaviour
             }
         }
         HallScene.DispatchRenderLevels();
+    }
+
+    public bool CanDisplayInterstitialAds()
+    {
+        if (interstitialAdCDRunning)
+        {
+            return false;
+        }
+        else
+        {
+            StartCoroutine(InterstitialAdCoolDownRunner());
+            return true;
+        }
+    }
+
+    private IEnumerator InterstitialAdCoolDownRunner()
+    {
+        interstitialAdCDRunning = true;
+        yield return new WaitForSeconds(Configs.INTERSTITIAL_AD_CD);
+        interstitialAdCDRunning = false;
     }
 }

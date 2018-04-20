@@ -14,6 +14,7 @@ public class Configs
     public const float AUTO_GREY_SCALE_RANGE_E = 0.9f;
     public const float FLIP_MARKER = 0.5f; // is marker white or black
     public const float BIG_EPSILON = 0.01f;
+    public const float INTERSTITIAL_AD_CD = 60f;
 
     // UI
     public const float DESIGN_HEIGHT = 1280f;

@@ -28,6 +28,7 @@ public class GameScene : MonoBehaviour
 
     private List<ColorPicker> Pickers;
     private BannerView bannerView;
+    InterstitialAd interstitial;
 
     private static GameScene self;
     private static Queue<Action> ReceivedActions = new Queue<Action>();
@@ -40,6 +41,10 @@ public class GameScene : MonoBehaviour
     private void Start()
     {
         RequestBanner();
+        if (DataManager.Instance.CanDisplayInterstitialAds())
+        {
+            RequestInterstitial();
+        }
     }
 
     // Update is called once per frame
@@ -49,6 +54,10 @@ public class GameScene : MonoBehaviour
         {
             ReceivedActions.Dequeue()();
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            OnBackClicked();
+        }
     }
 
     private void OnApplicationPause(bool pause)
@@ -56,17 +65,14 @@ public class GameScene : MonoBehaviour
         SaveGame();
     }
 
-    // a_bann_test:    ca-app-pub-3940256099942544/6300978111
-    // andriod_banner: ca-app-pub-7959728254107074/9782059553
-    // ios_banner:     ca-app-pub-7959728254107074/7566959755
-    // andriod_inters: ca-app-pub-7959728254107074/9398916175
-    // ios_interstiti: ca-app-pub-7959728254107074/8113754665
     private void RequestBanner()
     {
 #if UNITY_ANDROID
-        string adUnitId = "ca-app-pub-7959728254107074/9782059553";
+        string adUnitId = "ca-app-pub-3940256099942544/6300978111"; // test
+        //string adUnitId = "ca-app-pub-7959728254107074/9782059553"; // dist
 #elif UNITY_IOS
-        string adUnitId = "ca-app-pub-7959728254107074/7566959755";
+        //string adUnitId = "ca-app-pub-3940256099942544/2934735716"; // test
+        string adUnitId = "ca-app-pub-7959728254107074/7566959755"; // dist
 #else
         string adUnitId = "unexpected_platform";
 #endif
@@ -77,7 +83,9 @@ public class GameScene : MonoBehaviour
         bannerView.OnAdLoaded += HandleOnAdLoaded;
 
         // Create an empty ad request.
-        AdRequest request = new AdRequest.Builder().Build();
+        AdRequest request = new AdRequest.Builder()
+            .AddTestDevice("4CFBEFA67D908C145471D121713E0390") // test device
+            .Build();
 
         // Load the banner with the request.
         bannerView.LoadAd(request);
@@ -87,6 +95,35 @@ public class GameScene : MonoBehaviour
     {
         // move down back button
         DispatchReposYBackButton(0f - (bannerView.GetHeightInPixels() / Screen.height + BackButtonTopMargin / Configs.DESIGN_HEIGHT) * Configs.DESIGN_HEIGHT);
+    }
+
+    private void RequestInterstitial()
+    {
+#if UNITY_ANDROID
+        string adUnitId = "ca-app-pub-3940256099942544/1033173712"; // test
+        //string adUnitId = "ca-app-pub-7959728254107074/9398916175"; // dist
+#elif UNITY_IOS
+        //string adUnitId = "ca-app-pub-3940256099942544/4411468910"; // test
+        string adUnitId = "ca-app-pub-7959728254107074/8113754665"; // dist
+#else
+        string adUnitId = "unexpected_platform";
+#endif
+
+        // Initialize an InterstitialAd.
+        interstitial = new InterstitialAd(adUnitId);
+        // Called when the ad is closed.
+        interstitial.OnAdClosed += HandleOnIntAdClosed;
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder()
+            .AddTestDevice("4CFBEFA67D908C145471D121713E0390") // test device
+            .Build();
+        // Load the interstitial with the request.
+        interstitial.LoadAd(request);
+    }
+
+    private void HandleOnIntAdClosed(object sender, EventArgs e)
+    {
+        interstitial.Destroy();
     }
 
     private void InitWorld()
@@ -283,8 +320,21 @@ public class GameScene : MonoBehaviour
         {
             SaveGame();
         }
-        bannerView.Destroy();
         HallScene.DispatchRenderLevels();
+
+        // ads behaviour when exit
+        bannerView.Destroy();
+        if (interstitial != null)
+        {
+            if (interstitial.IsLoaded())
+            {
+                interstitial.Show();
+            }
+            else
+            {
+                interstitial.Destroy();
+            }
+        }
     }
 
     private void SaveGame()
