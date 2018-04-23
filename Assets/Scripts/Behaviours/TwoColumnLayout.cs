@@ -35,7 +35,6 @@ public class TwoColumnLayout : MonoBehaviour
     private void LayoutChildren()
     {
         LevelEntrance[] children = GetComponentsInChildren<LevelEntrance>();
-        Debug.Log(Configs.LEVEL_MARGIN);
         gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(0, Mathf.Floor((children.Length + 1) / 2f) * (Configs.LEVEL_HEIGHT + Configs.LEVEL_MARGIN) + Configs.LEVEL_MARGIN);
         for (int i = 0; i < children.Length; i ++)
         {
