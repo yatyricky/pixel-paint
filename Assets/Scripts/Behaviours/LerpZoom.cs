@@ -8,7 +8,6 @@ public class LerpZoom : MonoBehaviour
     public float TransitionTime = 3;
 
     private float _currentSize;
-    private float _lerpTime;
     private Camera _camera;
 
     void Start()
@@ -30,10 +29,6 @@ public class LerpZoom : MonoBehaviour
 
             //_currentSize = Mathf.Lerp(_currentSize, TargetSize, t);
             _camera.orthographicSize = TargetSize;
-        }
-        else
-        {
-            _lerpTime = 0f;
         }
     }
 

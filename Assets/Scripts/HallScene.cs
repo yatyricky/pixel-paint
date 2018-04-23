@@ -8,6 +8,7 @@ public class HallScene : MonoBehaviour
     public GameObject LevelEntrancePrefab;
     public TwoColumnLayout TrendingViewObjects;
     public TwoColumnLayout FavoriteViewObjects;
+    public GameObject MorePage;
     public RectTransform Canvas;
     public BetterToggle TrendingToggle;
 
@@ -86,11 +87,18 @@ public class HallScene : MonoBehaviour
     public void OnClickedFavorite()
     {
         CanvasSwitchPage(1);
+        MorePage.SetActive(false);
     }
 
     public void OnClickedTrending()
     {
         CanvasSwitchPage(0);
+        MorePage.SetActive(false);
+    }
+
+    public void OnClickedMore()
+    {
+        MorePage.SetActive(true);
     }
 
 }

@@ -62,7 +62,6 @@ public class DataManager : MonoBehaviour
             FileInfo[] saveInfo = levelDir.GetFiles("*.json");
             foreach (FileInfo f in saveInfo)
             {
-                string key = f.Name.Split('.')[0];
                 string json = File.ReadAllText(f.FullName);
                 LevelData asset = JsonUtility.FromJson<LevelData>(json);
                 AllLevels.Add(asset.Name, new LevelAsset(asset));
@@ -122,7 +121,6 @@ public class DataManager : MonoBehaviour
             FileInfo[] saveInfo = saveDir.GetFiles("*.json");
             foreach (FileInfo f in saveInfo)
             {
-                string key = f.Name.Split('.')[0];
                 string json = File.ReadAllText(f.FullName);
                 LevelData asset = JsonUtility.FromJson<LevelData>(json);
                 AllSaves.Add(asset.Name, new LevelAsset(asset));

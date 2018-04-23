@@ -494,6 +494,11 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114301393464088882, guid: 459f837a5f3a2834ca05b9dee07afe4f,
+        type: 2}
+      propertyPath: m_FontData.m_FontSize
+      value: 24
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 459f837a5f3a2834ca05b9dee07afe4f, type: 2}
   m_IsPrefabParent: 0
@@ -608,8 +613,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InternalLevels:
-  - {fileID: 4900000, guid: 9459ba0070844be4499e7a53bc474a78, type: 3}
+  - {fileID: 4900000, guid: 8b218e884f9e7194f9fc83c0ada9a4c1, type: 3}
+  - {fileID: 4900000, guid: c04bcc58840fbb549be50535396f90fb, type: 3}
+  - {fileID: 4900000, guid: 7e1b7fc6b9c789f45a6e965aa45a7c5b, type: 3}
+  - {fileID: 4900000, guid: b7856a4eff5056f4ab31de33b1e8b1b3, type: 3}
   - {fileID: 4900000, guid: 29979e3d1044e52468e83555c8983efb, type: 3}
+  - {fileID: 4900000, guid: f65b20317d775f745812ce9a1f660a07, type: 3}
 --- !u!4 &556785385
 Transform:
   m_ObjectHideFlags: 0
@@ -1060,6 +1069,7 @@ MonoBehaviour:
     type: 2}
   TrendingViewObjects: {fileID: 168605529}
   FavoriteViewObjects: {fileID: 1504263620}
+  MorePage: {fileID: 1168434020}
   Canvas: {fileID: 619787957}
   TrendingToggle: {fileID: 266846717}
 --- !u!224 &731974742 stripped
@@ -1481,7 +1491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1168434021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1574,9 +1584,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 72}
+  m_AnchoredPosition: {x: 0, y: 640}
   m_SizeDelta: {x: 720, y: 1136}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1168434026
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2067,7 +2077,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1438953774}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 719698872}
+        m_MethodName: OnClickedMore
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1438953774
@@ -2850,6 +2871,7 @@ MonoBehaviour:
   Loader: {fileID: 731974743}
   Levels: {fileID: 168605529}
   Threshold: 30
+  DefaultMover: {fileID: 1870418634}
 --- !u!1 &1849813638
 GameObject:
   m_ObjectHideFlags: 0

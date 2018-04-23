@@ -1,11 +1,13 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class TrendingContents : MonoBehaviour
 {
     public InlineLoader Loader;
     public TwoColumnLayout Levels;
     public float Threshold;
+    public ScrollRect DefaultMover;
 
     private float mLoaderHeight;
     private RectTransform mRect;
@@ -29,7 +31,12 @@ public class TrendingContents : MonoBehaviour
         {
             if (transform.localPosition.y - mLoaderHeight < 0f)
             {
-                transform.localPosition = Vector3.SmoothDamp(transform.localPosition, new Vector3(0, mLoaderHeight, 0), ref velocity, 0.05f);
+                DefaultMover.decelerationRate = 0f;
+                transform.localPosition = Vector3.SmoothDamp(transform.localPosition, new Vector3(0, mLoaderHeight, 0), ref velocity, 0.08f);
+            }
+            else
+            {
+                DefaultMover.decelerationRate = 0.135f;
             }
         }
     }

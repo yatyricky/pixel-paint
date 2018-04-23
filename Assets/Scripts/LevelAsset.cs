@@ -37,7 +37,6 @@ public class LevelAsset
         for (int i = 0; i < Data.Length; i++)
         {
             Color color;
-            string hex = "#" + data.Data[i];
             if (ColorUtility.TryParseHtmlString("#" + data.Data[i], out color))
             {
                 Data[i] = color;

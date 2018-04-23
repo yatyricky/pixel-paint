@@ -29,7 +29,7 @@ public class MorePage : MonoBehaviour
         //Set title of action or intent
         intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TITLE"), "Check out Pixel Art");
         // Set actual data which you want to share
-        intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), "Hi, I've found this relaxing app, recommended. https://play.google.com/store/apps/details?id=app.smalltricks.picsart");
+        intentObject.Call<AndroidJavaObject>("putExtra", intentClass.GetStatic<string>("EXTRA_TEXT"), "Hi, I've found this great relaxing app. https://play.google.com/store/apps/details?id=app.smalltricks.picsart");
 
         AndroidJavaClass unity = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
         AndroidJavaObject currentActivity = unity.GetStatic<AndroidJavaObject>("currentActivity");
