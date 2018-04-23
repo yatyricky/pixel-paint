@@ -11,7 +11,7 @@ public class HallScene : MonoBehaviour
     public RectTransform Canvas;
     public BetterToggle TrendingToggle;
 
-    private float CanvasTargetPos = -360f;
+    private float CanvasTargetPos = 0 - Configs.SCREEN_WIDTH * 0.5f;
     private Vector3 velocity = Vector3.zero;
 
     private static HallScene self;
@@ -80,7 +80,7 @@ public class HallScene : MonoBehaviour
 
     private void CanvasSwitchPage(int page)
     {
-        CanvasTargetPos = Configs.DESIGN_WIDTH / 2f - page * Configs.DESIGN_WIDTH;
+        CanvasTargetPos = Configs.SCREEN_WIDTH / 2f - page * Configs.SCREEN_WIDTH;
     }
 
     public void OnClickedFavorite()

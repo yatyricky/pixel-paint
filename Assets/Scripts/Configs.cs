@@ -19,10 +19,18 @@ public class Configs
     // UI
     public const float DESIGN_HEIGHT = 1280f;
     public const float DESIGN_WIDTH = 720f;
+    public static float SCREEN_WIDTH = 720f;
+    public static bool SHOULD_CHANGE_WIDTH = false;
+    public const float STANDARD_RATIO = DESIGN_WIDTH / DESIGN_HEIGHT;
     public const float WINDOW_HEIGHT = 1280f;
     public const float WINDOW_RATIO = WINDOW_HEIGHT / DESIGN_WIDTH;
     public const float PIXEL_WIDTH_CAM_RATIO = 1.42f;
     public const float PALETTE_WIDTH = 144;
+    public const float LEVEL_DESIGN_WIDTH_RATIO = 0.47f;
+    public static float LEVEL_WIDTH = 339f;
+    public static float LEVEL_HEIGHT = 410f;
+    public static float LEVEL_RATIO = LEVEL_WIDTH / LEVEL_HEIGHT;
+    public static float LEVEL_MARGIN = 14f;
 
     // NETWORK
     public const string SERVER = "https://g.nefti.me";

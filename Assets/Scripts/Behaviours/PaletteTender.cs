@@ -31,10 +31,12 @@ public class PaletteTender : MonoBehaviour
     {
         Animating = true;
         int size = GameManager.Level.Palette.Length;
-        int target = index - 3;
-        if (target > size - 5)
+        float numberPerRow = Configs.SCREEN_WIDTH / Configs.PALETTE_WIDTH;
+        float middle = numberPerRow / 2f + 0.5f;
+        float target = index - middle;
+        if (target > size - numberPerRow)
         {
-            target = size - 5;
+            target = size - numberPerRow;
         }
         if (target < 0)
         {

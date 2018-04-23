@@ -57,8 +57,8 @@ public class TrendingContents : MonoBehaviour
     {
         float height = levelsRect.sizeDelta.y + mLoaderHeight;
         mRect.sizeDelta = new Vector2(0, height);
-        mCollider.size = new Vector3(Configs.DESIGN_WIDTH, height, 1f);
-        mCollider.center = new Vector3(Configs.DESIGN_WIDTH / 2f, 0f - height / 2f, 0f);
+        mCollider.size = new Vector3(Configs.SCREEN_WIDTH, height, 1f);
+        mCollider.center = new Vector3(Configs.SCREEN_WIDTH / 2f, 0f - height / 2f, 0f);
     }
 
     public void CompleteLoad()
