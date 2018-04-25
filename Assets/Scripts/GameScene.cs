@@ -24,6 +24,7 @@ public class GameScene : MonoBehaviour
 
     [Header("UI")]
     public GameObject BackButton;
+    public GameObject MuteButton;
     public float BackButtonTopMargin;
 
     private List<ColorPicker> Pickers;
@@ -208,6 +209,8 @@ public class GameScene : MonoBehaviour
             // set marker to completed state
             UpdatePicker();
 
+            DataManager.Instance.AudioManager.PlayOneKey();
+
             touched = true;
         }
     }
@@ -365,6 +368,8 @@ public class GameScene : MonoBehaviour
         ReceivedActions.Enqueue(() =>
         {
             RectTransform rt = self.BackButton.GetComponent<RectTransform>();
+            rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
+            rt = self.MuteButton.GetComponent<RectTransform>();
             rt.anchoredPosition = new Vector2(rt.anchoredPosition.x, y);
         });
     }

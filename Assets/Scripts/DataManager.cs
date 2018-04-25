@@ -10,6 +10,7 @@ public class DataManager : MonoBehaviour
     public static DataManager Instance = null;
 
     public TextAsset[] InternalLevels;
+    public AudioManager AudioManager;
 
     public Dictionary<string, LevelAsset> AllLevels;
     public Dictionary<string, LevelAsset> AllSaves;
