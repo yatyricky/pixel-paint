@@ -350,6 +350,7 @@ public class GameScene : MonoBehaviour
         }
         File.WriteAllText(Path.Combine(dirPath, Save.Name + ".json"), json);
         DataManager.Instance.UpdateSavedData(Level.Name, Save);
+        DataManager.Instance.CommitLove(Level.Name, true);
     }
 
     public static void DispatchSetGameData(LevelAsset level, LevelAsset save)

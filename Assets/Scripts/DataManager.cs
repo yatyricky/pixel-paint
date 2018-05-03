@@ -15,6 +15,9 @@ public class DataManager : MonoBehaviour
     public Dictionary<string, LevelAsset> AllLevels;
     public Dictionary<string, LevelAsset> AllSaves;
 
+    [HideInInspector]
+    public List<string> LoveLevels;
+
     private bool interstitialAdCDRunning;
 
     private void Awake()
@@ -50,7 +53,76 @@ public class DataManager : MonoBehaviour
         interstitialAdCDRunning = false;
         LoadLevelData();
         LoadSaveData();
+        LoadLoveLevels();
         HallScene.DispatchRenderLevels();
+    }
+
+    private void LoadLoveLevels()
+    {
+        string dirPath = Path.Combine(Application.persistentDataPath, "LoveLevel");
+        if (Directory.Exists(dirPath))
+        {
+            string fpath = Path.Combine(dirPath, "data.json");
+            if (File.Exists(fpath))
+            {
+                string json = File.ReadAllText(fpath);
+                LoveLevels = new List<string>();
+                LoveLevels.AddRange(JsonUtility.FromJson<LevelEntrance.LoveData>(json).data);
+            }
+            else
+            {
+                LoveLevels = new List<string>();
+            }
+        }
+        else
+        {
+            Directory.CreateDirectory(dirPath);
+            LoveLevels = new List<string>();
+        }
+    }
+
+    internal void CommitLove(string name, bool beloved)
+    {
+        if (beloved)
+        {
+            if (LoveLevels.Contains(name))
+            {
+                Debug.LogWarning("Already loved " + name);
+            }
+            else
+            {
+                LoveLevels.Add(name);
+            }
+        }
+        else
+        {
+            if (!LoveLevels.Contains(name))
+            {
+                Debug.LogWarning("Already disloved " + name);
+            }
+            else
+            {
+                LoveLevels.Remove(name);
+            }
+        }
+        LevelEntrance.LoveData data = new LevelEntrance.LoveData();
+        data.data = LoveLevels.ToArray();
+        string json = JsonUtility.ToJson(data);
+        string dirPath = Path.Combine(Application.persistentDataPath, "LoveLevel");
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+        File.WriteAllText(Path.Combine(dirPath, "data.json"), json);
+        // post to server
+        StartCoroutine(PostLoveToServer(name, beloved ? 1 : -1));
+    }
+
+    private IEnumerator PostLoveToServer(string name, int val)
+    {
+        string request = Configs.SERVER + ":" + Configs.PORT + "/love?secret=" + Configs.SECRET + "&name=" + name + "&num=" + val;
+        WWW www = new WWW(request);
+        yield return www;
     }
 
     private void LoadLevelData()

@@ -1,21 +1,53 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System;
+using System.Collections;
 
 public class LevelEntrance : MonoBehaviour
 {
     public SpriteRenderer Art;
+    public Text Loves;
+    public GameObject Liked;
+    public GameObject Disliked;
 
     private LevelAsset mData;
     private LevelAsset mSave;
+    public bool beloved;
 
-    private void Awake()
+    private void Start()
     {
-        Button button = gameObject.GetComponent<Button>();
-        button.onClick.AddListener(OnClicked);
+        SetLoveNumber(0);
+        UpdateLoveUI();
     }
 
-    public void OnClicked()
+    private void SetLoveNumber(int v)
+    {
+        if (v <= 0)
+        {
+            Loves.text = "-";
+        }
+        else
+        {
+            Loves.text = v.ToString();
+        }
+    }
+
+    private void UpdateLoveUI()
+    {
+        if (beloved == true)
+        {
+            Disliked.SetActive(false);
+            Liked.SetActive(true);
+        }
+        else
+        {
+            Liked.SetActive(false);
+            Disliked.SetActive(true);
+        }
+    }
+
+    private void OnClicked()
     {
         if (mData == null)
         {
@@ -27,6 +59,29 @@ public class LevelEntrance : MonoBehaviour
             GameScene.DispatchSetGameData(mData, mSave);
             SceneManager.LoadScene("Game");
         }
+    }
+
+    private void OnClickedLove()
+    {
+        // update love icon
+        beloved = !beloved;
+        UpdateLoveUI();
+        // update text
+        int before;
+        if (!Int32.TryParse(Loves.text, out before))
+        {
+            before = 0;
+        }
+        if (beloved)
+        {
+            SetLoveNumber(before + 1);
+        }
+        else
+        {
+            SetLoveNumber(before - 1);
+        }
+        // update local file
+        DataManager.Instance.CommitLove(mData.Name, beloved);
     }
 
     internal void SetData(LevelAsset data, LevelAsset save)
@@ -60,5 +115,26 @@ public class LevelEntrance : MonoBehaviour
         mData = data;
 
         mSave = save;
+        StartCoroutine(UpdateLoves());
+    }
+
+    private IEnumerator UpdateLoves()
+    {
+        string request = Configs.SERVER + ":" + Configs.PORT + "/getdata?name=" + mData.Name + "&secret=" + Configs.SECRET;
+        WWW www = new WWW(request);
+        yield return www;
+        PixelData data = JsonUtility.FromJson<PixelData>(www.text);
+        SetLoveNumber(data.loves);
+    }
+
+    private class PixelData
+    {
+        public int loves;
+        public string[] tags;
+    }
+
+    public class LoveData
+    {
+        public string[] data;
     }
 }

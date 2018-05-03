@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.IO;
 using System.Collections.Generic;
 using System;
 
@@ -42,19 +41,35 @@ public class HallScene : MonoBehaviour
             // fill saves
             foreach (KeyValuePair<string, LevelAsset> entry in DataManager.Instance.AllSaves)
             {
-                LevelAsset levelData;
+                LevelAsset levelData = null;
                 if (DataManager.Instance.AllLevels.TryGetValue(entry.Key, out levelData))
                 {
-                    if (!self.FavoriteViewObjects.HasLoad(entry.Key))
+                    // love first
+                    if (DataManager.Instance.LoveLevels.Contains(entry.Key))
                     {
-                        GameObject go = Instantiate(self.LevelEntrancePrefab);
-                        self.FavoriteViewObjects.AddChild(go, entry.Key);
-                        go.GetComponent<LevelEntrance>().SetData(levelData, entry.Value);
+                        if (!self.FavoriteViewObjects.HasLoad(entry.Key))
+                        {
+                            GameObject go = Instantiate(self.LevelEntrancePrefab);
+                            LevelEntrance le = go.GetComponent<LevelEntrance>();
+                            le.SetData(levelData, entry.Value);
+                            le.beloved = true;
+                            self.FavoriteViewObjects.AddChild(go, entry.Key);
+                        }
+                    }
+                    else
+                    {
+                        if (!self.TrendingViewObjects.HasLoad(entry.Key))
+                        {
+                            GameObject go = Instantiate(self.LevelEntrancePrefab);
+                            LevelEntrance le = go.GetComponent<LevelEntrance>();
+                            le.SetData(levelData, entry.Value);
+                            self.TrendingViewObjects.AddChild(go, entry.Key);
+                        }
                     }
                 }
                 else
                 {
-                    Debug.Log("has save without level");
+                    Debug.LogWarning("Has save data without level data");
                 }
             }
             // fill all levels
@@ -62,15 +77,30 @@ public class HallScene : MonoBehaviour
             {
                 if (!DataManager.Instance.AllSaves.ContainsKey(entry.Key))
                 {
-                    if (!self.TrendingViewObjects.HasLoad(entry.Key))
+                    if (DataManager.Instance.LoveLevels.Contains(entry.Key))
                     {
-                        GameObject go = Instantiate(self.LevelEntrancePrefab);
-                        self.TrendingViewObjects.AddChild(go, entry.Key);
-                        go.GetComponent<LevelEntrance>().SetData(entry.Value, null);
+                        if (!self.FavoriteViewObjects.HasLoad(entry.Key))
+                        {
+                            GameObject go = Instantiate(self.LevelEntrancePrefab);
+                            LevelEntrance le = go.GetComponent<LevelEntrance>();
+                            le.SetData(entry.Value, null);
+                            le.beloved = true;
+                            self.FavoriteViewObjects.AddChild(go, entry.Key);
+                        }
+                    }
+                    else
+                    {
+                        if (!self.TrendingViewObjects.HasLoad(entry.Key))
+                        {
+                            GameObject go = Instantiate(self.LevelEntrancePrefab);
+                            LevelEntrance le = go.GetComponent<LevelEntrance>();
+                            le.SetData(entry.Value, null);
+                            self.TrendingViewObjects.AddChild(go, entry.Key);
+                        }
                     }
                 }
             }
-            if (DataManager.Instance.AllSaves.Count == 0)
+            if (DataManager.Instance.LoveLevels.Count == 0)
             {
                 self.TrendingToggle.OnClicked();
                 self.OnClickedTrending();

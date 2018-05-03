@@ -17,8 +17,8 @@ public class BetterToggle : MonoBehaviour
             SetDisable();
         }
         Button btn = gameObject.GetComponent<Button>();
+        btn.onClick.RemoveAllListeners();
         btn.onClick.AddListener(OnClicked);
-
         Group = transform.parent.gameObject.GetComponent<BetterToggleGroup>();
     }
 
