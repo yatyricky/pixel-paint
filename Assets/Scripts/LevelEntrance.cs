@@ -90,11 +90,11 @@ public class LevelEntrance : MonoBehaviour
         float pixelsPerUnit = 0.2f;
         if (data.Height > data.Width)
         {
-            pixelsPerUnit = data.Height / Configs.LEVEL_ENTRANCE_FRAME_SIZE;
+            pixelsPerUnit = data.Height / Configs.LEVEL_ENTRANCE_FRAME_SIZE / Configs.SCREEN_WIDTH;
         }
         else
         {
-            pixelsPerUnit = data.Width / Configs.LEVEL_ENTRANCE_FRAME_SIZE;
+            pixelsPerUnit = data.Width / Configs.LEVEL_ENTRANCE_FRAME_SIZE / Configs.SCREEN_WIDTH;
         }
         if (save != null)
         {
@@ -123,8 +123,15 @@ public class LevelEntrance : MonoBehaviour
         string request = Configs.SERVER + ":" + Configs.PORT + "/getdata?name=" + mData.Name + "&secret=" + Configs.SECRET;
         WWW www = new WWW(request);
         yield return www;
-        PixelData data = JsonUtility.FromJson<PixelData>(www.text);
-        SetLoveNumber(data.loves);
+        if (SmallTricks.Utils.GetResponseCode(www) == 200)
+        {
+            PixelData data = JsonUtility.FromJson<PixelData>(www.text);
+            SetLoveNumber(data.loves);
+        }
+        else
+        {
+            DataManager.Instance.Toast("Could not connect");
+        }
     }
 
     private class PixelData

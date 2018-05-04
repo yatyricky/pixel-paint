@@ -14,9 +14,12 @@ public class DataManager : MonoBehaviour
 
     public Dictionary<string, LevelAsset> AllLevels;
     public Dictionary<string, LevelAsset> AllSaves;
+    public Toast ToastObject;
 
     [HideInInspector]
     public List<string> LoveLevels;
+    public List<string> SortTrend;
+    public List<string> SortLoved;
 
     private bool interstitialAdCDRunning;
 
@@ -54,11 +57,39 @@ public class DataManager : MonoBehaviour
         LoadLevelData();
         LoadSaveData();
         LoadLoveLevels();
+        LoadSortData();
         HallScene.DispatchRenderLevels();
+    }
+
+    private void LoadSortData()
+    {
+        SortTrend = new List<string>();
+        SortLoved = new List<string>();
+        string dirPath = Path.Combine(Application.persistentDataPath, "LoveLevel");
+        if (Directory.Exists(dirPath))
+        {
+            string fpath = Path.Combine(dirPath, "sorttrend.json");
+            if (File.Exists(fpath))
+            {
+                string json = File.ReadAllText(fpath);
+                SortTrend.AddRange(JsonUtility.FromJson<SortLevels>(json).data);
+            }
+            fpath = Path.Combine(dirPath, "sortloved.json");
+            if (File.Exists(fpath))
+            {
+                string json = File.ReadAllText(fpath);
+                SortLoved.AddRange(JsonUtility.FromJson<SortLevels>(json).data);
+            }
+        }
+        else
+        {
+            Directory.CreateDirectory(dirPath);
+        }
     }
 
     private void LoadLoveLevels()
     {
+        LoveLevels = new List<string>();
         string dirPath = Path.Combine(Application.persistentDataPath, "LoveLevel");
         if (Directory.Exists(dirPath))
         {
@@ -66,18 +97,12 @@ public class DataManager : MonoBehaviour
             if (File.Exists(fpath))
             {
                 string json = File.ReadAllText(fpath);
-                LoveLevels = new List<string>();
                 LoveLevels.AddRange(JsonUtility.FromJson<LevelEntrance.LoveData>(json).data);
-            }
-            else
-            {
-                LoveLevels = new List<string>();
             }
         }
         else
         {
             Directory.CreateDirectory(dirPath);
-            LoveLevels = new List<string>();
         }
     }
 
@@ -118,6 +143,35 @@ public class DataManager : MonoBehaviour
         StartCoroutine(PostLoveToServer(name, beloved ? 1 : -1));
     }
 
+    internal void CommitSort(string name, List<string> data)
+    {
+        string fn;
+        if (name == "Trend")
+        {
+            SortTrend = data;
+            fn = "sorttrend.json";
+        }
+        else if (name == "Loved")
+        {
+            SortLoved = data;
+            fn = "sortloved.json";
+        }
+        else
+        {
+            fn = "error.json";
+            Debug.LogError("Unknown sort name");
+        }
+        SortLevels sldata = new SortLevels();
+        sldata.data = data.ToArray();
+        string json = JsonUtility.ToJson(sldata);
+        string dirPath = Path.Combine(Application.persistentDataPath, "LoveLevel");
+        if (!Directory.Exists(dirPath))
+        {
+            Directory.CreateDirectory(dirPath);
+        }
+        File.WriteAllText(Path.Combine(dirPath, fn), json);
+    }
+
     private IEnumerator PostLoveToServer(string name, int val)
     {
         string request = Configs.SERVER + ":" + Configs.PORT + "/love?secret=" + Configs.SECRET + "&name=" + name + "&num=" + val;
@@ -156,7 +210,7 @@ public class DataManager : MonoBehaviour
         }
 
         // get updates
-        RequestUpdateLevels();
+        //RequestUpdateLevels();
     }
 
     public void RequestUpdateLevels()
@@ -168,19 +222,30 @@ public class DataManager : MonoBehaviour
 
     private IEnumerator DownloadNewLevels(string files)
     {
-        string request = Configs.SERVER + ":" + Configs.PORT + "/?secret=" + Configs.SECRET + "&list=" + files;
+        string request = Configs.SERVER + ":" + Configs.PORT + "/getsome?secret=" + Configs.SECRET + "&list=" + files;
         WWW www = new WWW(request);
         yield return www;
 
-        string dirPath = Application.persistentDataPath + "/LevelData";
-        string zipPath = dirPath  + "/bundle.zip";
-        if (File.Exists(zipPath))
+        switch (SmallTricks.Utils.GetResponseCode(www))
         {
-            File.Delete(zipPath);
+            case 200:
+                string dirPath = Application.persistentDataPath + "/LevelData";
+                string zipPath = dirPath + "/bundle.zip";
+                if (File.Exists(zipPath))
+                {
+                    File.Delete(zipPath);
+                }
+                File.WriteAllBytes(zipPath, www.bytes);
+                ZipUtil.Unzip(zipPath, dirPath);
+                File.Delete(zipPath);
+                break;
+            case 201:
+                Toast("Already up to date");
+                break;
+            default:
+                Toast("Could not connect");
+                break;
         }
-        File.WriteAllBytes(zipPath, www.bytes);
-        ZipUtil.Unzip(zipPath, dirPath);
-        File.Delete(zipPath);
         UpdateLevelData();
     }
 
@@ -247,10 +312,20 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    public void Toast(string text)
+    {
+        ToastObject.Show(text);
+    }
+
     private IEnumerator InterstitialAdCoolDownRunner()
     {
         interstitialAdCDRunning = true;
         yield return new WaitForSeconds(Configs.INTERSTITIAL_AD_CD);
         interstitialAdCDRunning = false;
+    }
+
+    public class SortLevels
+    {
+        public string[] data;
     }
 }

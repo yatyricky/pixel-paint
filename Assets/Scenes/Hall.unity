@@ -158,6 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa22d8ade2730364d8adaf3c0b515ac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: Trend
 --- !u!1 &176120231
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,11 +562,6 @@ Prefab:
         type: 2}
       propertyPath: m_Pivot.y
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114301393464088882, guid: 459f837a5f3a2834ca05b9dee07afe4f,
-        type: 2}
-      propertyPath: m_FontData.m_FontSize
-      value: 24
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 459f837a5f3a2834ca05b9dee07afe4f, type: 2}
@@ -2347,6 +2343,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa22d8ade2730364d8adaf3c0b515ac3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Name: Loved
 --- !u!1 &1505602896
 GameObject:
   m_ObjectHideFlags: 0

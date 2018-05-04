@@ -22,6 +22,7 @@ public class InitScreenSize : MonoBehaviour
     private void Start()
     {
         StartCoroutine(LoadHallScene());
+        Screen.fullScreen = true;
     }
 
     private IEnumerator LoadHallScene()

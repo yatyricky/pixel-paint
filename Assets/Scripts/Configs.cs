@@ -2,7 +2,6 @@
 public class Configs
 {
     // ACTION
-    public const float LEVEL_ENTRANCE_FRAME_SIZE = 270f;
     public const float ZOOM_MIN = 7f;
     public const float ZOOM_FADE_MARKER = 12f;
     public const float ZOOM_HIDE_MARKER = 24f;
@@ -29,6 +28,7 @@ public class Configs
     public const float LEVEL_DESIGN_WIDTH_RATIO = 0.47f;
     public static float LEVEL_WIDTH = 339f;
     public static float LEVEL_HEIGHT = 410f;
+    public const float LEVEL_ENTRANCE_FRAME_SIZE = 0.375f;
     public static float LEVEL_RATIO = LEVEL_WIDTH / LEVEL_HEIGHT;
     public static float LEVEL_MARGIN = 14f;
 
